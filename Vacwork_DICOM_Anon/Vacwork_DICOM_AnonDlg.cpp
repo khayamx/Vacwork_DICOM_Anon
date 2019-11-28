@@ -66,7 +66,7 @@ CVacworkDICOMAnonDlg::CVacworkDICOMAnonDlg(CWnd* pParent /*=nullptr*/)
 void CVacworkDICOMAnonDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_SOURCESIZE, m_size);
+	DDX_Text(pDX, IDC_SOURCESIZE, m_sizeDisp);
 	DDX_Text(pDX, IDC_FREEBYTES, m_freeBytes);
 	DDX_Text(pDX, IDC_USEDBYTES, m_usedBytes);
 	DDX_Text(pDX, IDC_CAP, m_capacity);
@@ -90,7 +90,9 @@ END_MESSAGE_MAP()
 BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog(); 
-	CalcDriveInfo(m_outputDestination);
+	DriveAttributes(m_outputDestination);
+	UpdateData(FALSE);
+
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -182,12 +184,18 @@ void CVacworkDICOMAnonDlg::OnNMCustomdrawProgress1(NMHDR* pNMHDR, LRESULT* pResu
 
 void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1()
 {
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialogEx::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
-
 	// TODO:  Add your control notification handler code here
+
+	CFolderPickerDialog m_dlg;
+	CString m_Folder;
+
+	m_dlg.m_ofn.lpstrTitle = _T("Source Folder");
+	m_dlg.m_ofn.lpstrInitialDir = _T("C:\\");
+	if (m_dlg.DoModal() == IDOK) {
+		m_sourceDestination = m_dlg.GetPathName();   // Use this to get the selected folder name 								  // after the dialog has closed
+		CalcDriveInfo(m_sourceDestination);// recalculate disk info for source folder selected
+		UpdateData(FALSE);   // To show updated folder in GUI
+	}
 }
 
 
@@ -205,7 +213,7 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2()
 // Write own functions here
 
 //calc disk space
-void CVacworkDICOMAnonDlg::CalcDriveInfo(CString DirName)
+void CVacworkDICOMAnonDlg::DriveAttributes(CString DirName)
 {
 	
 	GetDiskFreeSpaceEx(DirName, (PULARGE_INTEGER)&lpFreeBytesAvailableToCaller, (PULARGE_INTEGER)&lpTotalNumberOfBytes, (PULARGE_INTEGER)&lpTotalNumberOfFreeBytes);
@@ -215,7 +223,42 @@ void CVacworkDICOMAnonDlg::CalcDriveInfo(CString DirName)
 	m_usedBytes = m_capacity - m_freeBytes;
 
 }
-//browse buttons
+//find size of files
+void CVacworkDICOMAnonDlg::CalculateSize(CString DirName) {
+
+	WIN32_FIND_DATAA data;
+	HANDLE sh = FindFirstFileA((DirName + "\\*"), &data);
+
+	if (sh == INVALID_HANDLE_VALUE)
+	{
+		return;
+	}
+
+	do
+	{
+		// skip current and parent
+		if (strcmp(data.cFileName, ".") != 0 && strcmp(data.cFileName, "..") != 0)
+		{
+			// if found object is ...
+			if ((data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
+			{
+				// directory, then search it recursievly
+				this->CalculateSize(DirName + "\\" + data.cFileName);
+			}
+			else
+			{
+				// otherwise get object size and add it to directory size
+				this->m_size += (__int64)(data.nFileSizeHigh * (MAXDWORD)+data.nFileSizeLow);
+			}
+		}
+
+	} while (FindNextFileA(sh, &data)); // do
+	FindClose(sh);
+	m_size = m_size / 1000000; // MB
+	m_sizeDisp.Format("%.2f", m_size);
+
+	UpdateData(FALSE);
+}
 
 // invalid dir handler
 

@@ -13,7 +13,8 @@ public:
 	CVacworkDICOMAnonDlg(CWnd* pParent = nullptr);	// standard constructor
 	//insert functions I have crreated
 	//void fc(type paramName);
-	void CalcDriveInfo(CString DirName);
+	void DriveAttributes(CString DirName);
+	void CalculateSize(CString DirName);
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -49,6 +50,8 @@ private:
 	__int64 lpFreeBytesAvailableToCaller, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes;
 
 	int m_size;
+	CString m_sizeDisp;
+
 	int  m_freeBytes;
 	int m_usedBytes;
 	int m_capacity;
