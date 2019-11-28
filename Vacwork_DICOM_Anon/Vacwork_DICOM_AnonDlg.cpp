@@ -193,7 +193,7 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1()
 	m_dlg.m_ofn.lpstrInitialDir = _T("C:\\");
 	if (m_dlg.DoModal() == IDOK) {
 		m_sourceDestination = m_dlg.GetPathName();   // Use this to get the selected folder name 								  // after the dialog has closed
-		CalcDriveInfo(m_sourceDestination);// recalculate disk info for source folder selected
+		DriveAttributes(m_sourceDestination);// recalculate disk info for source folder selected
 		UpdateData(FALSE);   // To show updated folder in GUI
 	}
 }
@@ -243,7 +243,7 @@ void CVacworkDICOMAnonDlg::CalculateSize(CString DirName) {
 			if ((data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
 			{
 				// directory, then search it recursievly
-				this->CalculateSize(DirName + "\\" + data.cFileName);
+				this->CalculateSize(DirName + _T("\\") + (LPCTSTR)data.cFileName);
 			}
 			else
 			{
@@ -255,7 +255,7 @@ void CVacworkDICOMAnonDlg::CalculateSize(CString DirName) {
 	} while (FindNextFileA(sh, &data)); // do
 	FindClose(sh);
 	m_size = m_size / 1000000; // MB
-	m_sizeDisp.Format("%.2f", m_size);
+	m_sizeDisp.Format(_T("%.2f"), m_size);
 
 	UpdateData(FALSE);
 }

@@ -1,12 +1,4 @@
-﻿  Vacwork_DICOM_Anon.cpp
-  Vacwork_DICOM_AnonDlg.cpp
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(196,3): error C3861: 'CalcDriveInfo': identifier not found
+﻿  Vacwork_DICOM_AnonDlg.cpp
 C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(221,45): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
 C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(222,36): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(246,56): error C2664: 'void CVacworkDICOMAnonDlg::CalculateSize(CString)': cannot convert argument 1 from '_bstr_t' to 'CString'
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(246,40): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(227,28): message : see declaration of 'CVacworkDICOMAnonDlg::CalculateSize'
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(258,34): error C2664: 'void ATL::CStringT<wchar_t,StrTraitMFC_DLL<wchar_t,ATL::ChTraitsCRT<wchar_t>>>::Format(UINT,...)': cannot convert argument 1 from 'const char [5]' to 'const wchar_t *'
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(258,20): message : Types pointed to are unrelated; conversion requires reinterpret_cast, C-style cast or function-style cast
-  Generating Code...
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.23.28105\atlmfc\include\cstringt.h(2182,15): message : see declaration of 'ATL::CStringT<wchar_t,StrTraitMFC_DLL<wchar_t,ATL::ChTraitsCRT<wchar_t>>>::Format'
+  Vacwork_DICOM_Anon.vcxproj -> C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Debug\Vacwork_DICOM_Anon.exe
