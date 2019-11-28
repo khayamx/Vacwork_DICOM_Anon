@@ -13,13 +13,12 @@
 #endif
 
 // create variables for testing
-
-int m_size = 150;
+/*int m_size = 150;
 int  m_freeBytes = 281;
 int m_usedBytes = 140;
 int m_capacity = 230;
 int m_dcmFiles = 4;
-int m_dcmFilesComplt = 230;
+int m_dcmFilesComplt = 2;*/
 
 
 // CAboutDlg dialog used for App About
@@ -75,6 +74,7 @@ void CVacworkDICOMAnonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_FILESDONE, m_dcmFilesComplt);
 }
 
+
 BEGIN_MESSAGE_MAP(CVacworkDICOMAnonDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
@@ -89,8 +89,8 @@ END_MESSAGE_MAP()
 
 BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 {
-	CDialogEx::OnInitDialog();
-
+	CDialogEx::OnInitDialog(); 
+	CalcDriveInfo(m_outputDestination);
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -200,3 +200,25 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2()
 
 	// TODO:  Add your control notification handler code here
 }
+
+
+// Write own functions here
+
+//calc disk space
+void CVacworkDICOMAnonDlg::CalcDriveInfo(CString DirName)
+{
+	
+	GetDiskFreeSpaceEx(DirName, (PULARGE_INTEGER)&lpFreeBytesAvailableToCaller, (PULARGE_INTEGER)&lpTotalNumberOfBytes, (PULARGE_INTEGER)&lpTotalNumberOfFreeBytes);
+
+	m_freeBytes = lpFreeBytesAvailableToCaller / 1000000000;
+	m_capacity = lpTotalNumberOfBytes / 1000000000;
+	m_usedBytes = m_capacity - m_freeBytes;
+
+}
+//browse buttons
+
+// invalid dir handler
+
+//no space handler
+
+//
