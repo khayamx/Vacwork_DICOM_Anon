@@ -45,6 +45,15 @@ private:
 	CString m_sourceDestination;
 	CString m_outputDestination;
 	
+	//For registry path on machine
+	char cbDataPC[MAX_PATH];
+	char cbDataPath[MAX_PATH];
+	unsigned long sizePC = 1024;
+	unsigned long sizePath = 1024;
+	DWORD type = REG_SZ;
+	LSTATUS PCReturn, pathReturn;
+
+
 	//variables for calculating Drive Info
 	char(*DirName);
 	__int64 lpFreeBytesAvailableToCaller, lpTotalNumberOfBytes, lpTotalNumberOfFreeBytes;
@@ -57,4 +66,6 @@ private:
 	int m_capacity;
 	int m_dcmFiles = 4;
 	int m_dcmFilesComplt = 2;
+public:
+	afx_msg void OnStnClickedFilesdone();
 };

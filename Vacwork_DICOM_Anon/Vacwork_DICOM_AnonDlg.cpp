@@ -1,4 +1,3 @@
-
 // Vacwork_DICOM_AnonDlg.cpp : implementation file
 //
 
@@ -66,12 +65,13 @@ CVacworkDICOMAnonDlg::CVacworkDICOMAnonDlg(CWnd* pParent /*=nullptr*/)
 void CVacworkDICOMAnonDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_SOURCESIZE, m_sizeDisp);
+	DDX_Text(pDX, IDC_SOURCESIZE, m_size);
 	DDX_Text(pDX, IDC_FREEBYTES, m_freeBytes);
 	DDX_Text(pDX, IDC_USEDBYTES, m_usedBytes);
 	DDX_Text(pDX, IDC_CAP, m_capacity);
 	DDX_Text(pDX, IDC_NUMDCMFILES, m_dcmFiles);
 	DDX_Text(pDX, IDC_FILESDONE, m_dcmFilesComplt);
+
 }
 
 
@@ -82,6 +82,7 @@ BEGIN_MESSAGE_MAP(CVacworkDICOMAnonDlg, CDialogEx)
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_PROGRESS1, &CVacworkDICOMAnonDlg::OnNMCustomdrawProgress1)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE1, &CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE2, &CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2)
+	ON_STN_CLICKED(IDC_FILESDONE, &CVacworkDICOMAnonDlg::OnStnClickedFilesdone)
 END_MESSAGE_MAP()
 
 
@@ -92,7 +93,7 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 	CDialogEx::OnInitDialog(); 
 	DriveAttributes(m_outputDestination);
 	UpdateData(FALSE);
-
+	
 	// Add "About..." menu item to system menu.
 
 	// IDM_ABOUTBOX must be in the system command range.
@@ -118,7 +119,34 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
+	//Registry data retrival 
+	HKEY hKey;
+	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\WOW6432Node\\LODOX\\DBSERVER"), NULL, KEY_READ, &hKey) != ERROR_SUCCESS) //Opening Registry Key
+	{
+		return FALSE; //Cannot open key
+	}
+
+	PCReturn = RegQueryValueEx(hKey, _T("ComputerName"), NULL, &type, (LPBYTE)&cbDataPC, &sizePC);
+	pathReturn = RegQueryValueEx(hKey, _T("ShareName"), NULL, &type, (LPBYTE)&cbDataPath, &sizePath);
+
+	RegCloseKey(hKey);
+
 	// TODO: Add extra initialization here
+	CString m_sDataPath;
+
+	if (strlen(cbDataPC) > 0)
+	{
+		m_sDataPath.Format(_T("\\\\%s\\"), cbDataPC);
+	}
+
+	if (strlen(cbDataPath) > 0)
+	{
+		m_sDataPath.AppendFormat(_T("%s"), cbDataPath);
+	}
+
+	m_sourceDestination = m_sDataPath;
+	m_size= 0;
+	CalculateSize(m_sDataPath);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -187,7 +215,7 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1()
 	// TODO:  Add your control notification handler code here
 
 	CFolderPickerDialog m_dlg;
-	CString m_Folder;
+	//CString m_Folder;
 
 	m_dlg.m_ofn.lpstrTitle = _T("Source Folder");
 	m_dlg.m_ofn.lpstrInitialDir = _T("C:\\");
@@ -254,8 +282,9 @@ void CVacworkDICOMAnonDlg::CalculateSize(CString DirName) {
 
 	} while (FindNextFileA(sh, &data)); // do
 	FindClose(sh);
-	m_size = m_size / 1000000; // MB
-	m_sizeDisp.Format(_T("%.2f"), m_size);
+	float a = 1000.00;
+	m_size = (float)m_size / a; // MB
+	//m_sizeDisp.Format(_T("%.2f"), m_size);
 
 	UpdateData(FALSE);
 }
@@ -265,3 +294,9 @@ void CVacworkDICOMAnonDlg::CalculateSize(CString DirName) {
 //no space handler
 
 //
+
+
+void CVacworkDICOMAnonDlg::OnStnClickedFilesdone()
+{
+	// TODO: Add your control notification handler code here
+}
