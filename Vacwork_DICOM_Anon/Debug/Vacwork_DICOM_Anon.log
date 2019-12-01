@@ -1,5 +1,5 @@
 ﻿  Vacwork_DICOM_AnonDlg.cpp
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(249,45): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(250,36): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(286,25): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(247,45): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(248,36): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(284,25): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
   Vacwork_DICOM_Anon.vcxproj -> C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Debug\Vacwork_DICOM_Anon.exe

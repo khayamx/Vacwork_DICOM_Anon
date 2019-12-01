@@ -7,19 +7,11 @@
 #include "Vacwork_DICOM_AnonDlg.h"
 #include "afxdialogex.h"
 
+
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
-// create variables for testing
-/*int m_size = 150;
-int  m_freeBytes = 281;
-int m_usedBytes = 140;
-int m_capacity = 230;
-int m_dcmFiles = 4;
-int m_dcmFilesComplt = 2;*/
-
-
 // CAboutDlg dialog used for App About
 
 class CAboutDlg : public CDialogEx
@@ -55,7 +47,6 @@ END_MESSAGE_MAP()
 
 // CVacworkDICOMAnonDlg dialog
 
-
 CVacworkDICOMAnonDlg::CVacworkDICOMAnonDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_VACWORK_DICOM_ANON_DIALOG, pParent)
 {
@@ -71,9 +62,9 @@ void CVacworkDICOMAnonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_CAP, m_capacity);
 	DDX_Text(pDX, IDC_NUMDCMFILES, m_dcmFiles);
 	DDX_Text(pDX, IDC_FILESDONE, m_dcmFilesComplt);
+	DDX_Text(pDX, IDC_PROGRESS1, m_progress);
 
 }
-
 
 BEGIN_MESSAGE_MAP(CVacworkDICOMAnonDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
@@ -83,8 +74,8 @@ BEGIN_MESSAGE_MAP(CVacworkDICOMAnonDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE1, &CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE2, &CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2)
 	ON_STN_CLICKED(IDC_FILESDONE, &CVacworkDICOMAnonDlg::OnStnClickedFilesdone)
+	ON_BN_CLICKED(IDC_BUTTON3, &CVacworkDICOMAnonDlg::OnBnClickedButton3)
 END_MESSAGE_MAP()
-
 
 // CVacworkDICOMAnonDlg message handlers
 
@@ -118,6 +109,13 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
+	// enable close and minimize buttons
+	//close box
+	//EnableMenuItem(GetSystemMenu(FALSE), SC_CLOSE, MF_BYCOMMAND | MF_ENABLED);
+	
+	//minimize box
+	//SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) | WS_MINIMIZEBOX);
+
 
 	//Registry data retrival 
 	HKEY hKey;
@@ -125,10 +123,8 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 	{
 		return FALSE; //Cannot open key
 	}
-
 	PCReturn = RegQueryValueEx(hKey, _T("ComputerName"), NULL, &type, (LPBYTE)&cbDataPC, &sizePC);
 	pathReturn = RegQueryValueEx(hKey, _T("ShareName"), NULL, &type, (LPBYTE)&cbDataPath, &sizePath);
-
 	RegCloseKey(hKey);
 
 	// TODO: Add extra initialization here
@@ -147,6 +143,7 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 	m_sourceDestination = m_sDataPath;
 	m_size= 0;
 	CalculateSize(m_sDataPath);
+	//call on image moving function
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -200,8 +197,6 @@ HCURSOR CVacworkDICOMAnonDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
-
-
 void CVacworkDICOMAnonDlg::OnNMCustomdrawProgress1(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
@@ -226,18 +221,21 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1()
 	}
 }
 
-
 void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2()
 {
-	// TODO:  If this is a RICHEDIT control, the control will not
-	// send this notification unless you override the CDialogEx::OnInitDialog()
-	// function and call CRichEditCtrl().SetEventMask()
-	// with the ENM_CHANGE flag ORed into the mask.
-
 	// TODO:  Add your control notification handler code here
+	CFolderPickerDialog m_dlg;
+	//CString m_Folder;
+
+	m_dlg.m_ofn.lpstrTitle = _T("Destination Folder");
+	m_dlg.m_ofn.lpstrInitialDir = _T("C:\\");
+	if (m_dlg.DoModal() == IDOK) {
+		m_outputDestination = m_dlg.GetPathName();   // Use this to get the selected folder name 								  // after the dialog has closed
+		DriveAttributes(m_outputDestination);// recalculate disk info for source folder selected
+		UpdateData(TRUE);   // To show updated folder in GUI
+	}
+
 }
-
-
 // Write own functions here
 
 //calc disk space
@@ -292,11 +290,125 @@ void CVacworkDICOMAnonDlg::CalculateSize(CString DirName) {
 // invalid dir handler
 
 //no space handler
-
-//
-
-
 void CVacworkDICOMAnonDlg::OnStnClickedFilesdone()
 {
 	// TODO: Add your control notification handler code here
+}
+
+void CVacworkDICOMAnonDlg::MoveFiles(CString sourceDir, CString destDir) {
+	//info about path
+	WIN32_FIND_DATAA data;
+	HANDLE sh = FindFirstFileA((sourceDir + "\\*"), &data);
+	// get address of .raw image in source directory
+
+	// constructing these file objects doesn't open them
+	CFile sourceFile;
+	CFile destFile;
+
+	// we'll use a CFileException object to get error information
+	CFileException ex;
+
+	// open the source file for reading
+	if (!sourceFile.Open(sourceDir, CFile::modeRead | CFile::shareDenyWrite, &ex))
+	{
+		// complain if an error happened
+		// no need to delete the ex object
+
+		//TCHAR szError[1024];
+		//ex.GetErrorMessage(szError, 1024);
+		//need to print error message in pop up window
+		//AfxMessageBox("Couldn't open source file");
+		return;
+	}
+	else
+	{
+		//if (!destFile.Open(destDir, CFile::modeWrite | CFile::shareExclusive | CFile::modeCreate, &ex))
+		//{
+		//	TCHAR szError[1024];
+		//	ex.GetErrorMessage(szError, 1024);
+		//	//need to print error message in pop up window
+		//    //_tprintf_s(_T("Couldn't open source file: %1024s"), szError);
+
+		//	sourceFile.Close();
+		//	return false;
+		//}
+
+		//BYTE buffer[4096];
+		DWORD dwRead;
+
+		// Read in 4-byte blocks,
+		// remember how many bytes were actually read,
+		// and try to write that many out. This loop ends
+		// when there are no more bytes to read.
+		do{
+			int pos = 0;
+			for (int i = 0; i < width; i++) {
+				pos += i;
+				for (int j= 0; j < height; j++) {
+					pos += j;
+					dwRead = sourceFile.Read(readBuffer, array);
+					destFile.Write(readBuffer, dwRead);
+					// also need position
+					m_progress = (pos / array) * 100;
+				}
+			}
+		} while ( dwRead > 0);
+
+		// Close both files
+
+		destFile.Close();
+		sourceFile.Close();
+	}
+
+	//return true;
+
+	//get file name
+	//get directory path
+
+	//write that address to buffer pointer
+	//copy raw file from source Dir into Readbuffer
+	//copy buffer into other space
+	//write to destination Dir
+
+
+
+}
+/*
+void CVacworkDICOMAnonDlg::Convert() {
+	int retcode = DbInitLib(_T(""));
+	CString errorMessage = "Database not initialized.";
+	if (retcode != DB_OK)
+	{
+		AfxMessageBox(errorMessage);
+		return;
+	}
+	else
+	{
+
+
+	}
+}*/
+
+void CVacworkDICOMAnonDlg::OnBnClickedButton3()
+{//RUN BUTTON
+	// TODO: Add your control notification handler code here
+	UpdateData(TRUE);
+	//if (lpFreeBytesAvailable < m_dirSize) //1.0 GB
+	//{
+	//	AfxMessageBox("Not enough disk space available..");
+	//	return;
+	//}
+	//else{
+		MoveFiles(m_sourceDestination, m_outputDestination);
+		m_progressCount = 100;
+		m_progress = m_progressCount;
+		//SetPos(m_progressCount);
+		//AfxMessageBox("Complete");
+		//m_progressCount = RESET;
+		//m_progress.SetPos(m_progressCount);
+		//m_numDCM = RESET;
+	//}
+		UpdateData(TRUE);
+	OnInitDialog();
+
 }

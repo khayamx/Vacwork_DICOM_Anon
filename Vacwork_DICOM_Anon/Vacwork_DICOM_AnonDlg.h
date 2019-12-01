@@ -15,6 +15,9 @@ public:
 	//void fc(type paramName);
 	void DriveAttributes(CString DirName);
 	void CalculateSize(CString DirName);
+	//void Convert();
+	void MoveFiles(CString sourceDir, CString destDir);
+
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -64,8 +67,31 @@ private:
 	int  m_freeBytes;
 	int m_usedBytes;
 	int m_capacity;
+
+	//variables for reading files
+	char* buffer = nullptr; //pointer definition pointing to address in memory of pointer 
+	int fileSize = 55050240;
+	//int pBuffer = newchar[fileSize];
+	int width = 7168;
+	int height = 1920;
+	BYTE readBuffer[7168][1920];
+	BYTE writeBuffer[7168][1920];
+	// name of .raw file    'STN911_Uncorr_201977_15h56_7168x1920'
+	const char* fileName = "STN911_Uncorr_201977_15h56_7168x1920";
+
+	//progress counter variables
+	//1 pixel is one unit of processing = 4 bytes/32 bits
+
+	int posInFile = 0;
+	int array = fileSize / 4;
+
+	int m_progress=0;
+	int m_progressCount = 0;
 	int m_dcmFiles = 4;
 	int m_dcmFilesComplt = 2;
+
+
 public:
 	afx_msg void OnStnClickedFilesdone();
+	afx_msg void OnBnClickedButton3();
 };
