@@ -17,6 +17,7 @@
 #define IDC_CAP                         1022
 #define IDC_NUMDCMFILES                 1023
 #define IDC_FILESDONE                   1024
+#define IDC_PROGRESSCOUNT               1025
 
 // Next default values for new objects
 // 

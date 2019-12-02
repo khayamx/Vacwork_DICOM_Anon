@@ -57,13 +57,15 @@ CVacworkDICOMAnonDlg::CVacworkDICOMAnonDlg(CWnd* pParent /*=nullptr*/)
 void CVacworkDICOMAnonDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	
 	DDX_Text(pDX, IDC_SOURCESIZE, m_size);
 	DDX_Text(pDX, IDC_FREEBYTES, m_freeBytes);
 	DDX_Text(pDX, IDC_USEDBYTES, m_usedBytes);
 	DDX_Text(pDX, IDC_CAP, m_capacity);
-	DDX_Text(pDX, IDC_NUMDCMFILES, m_dcmFiles);
+	DDX_Text(pDX, IDC_NUMDCMFILES, m_Files);
 	DDX_Text(pDX, IDC_FILESDONE, m_dcmFilesComplt);
-	DDX_Text(pDX, IDC_PROGRESS1, m_progress);
+	DDX_Text(pDX, IDC_PROGRESSCOUNT, m_progressCount);
+	DDX_Control(pDX, IDC_PROGRESS1, m_progress);
 
 }
 
@@ -76,6 +78,8 @@ BEGIN_MESSAGE_MAP(CVacworkDICOMAnonDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE2, &CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2)
 	ON_STN_CLICKED(IDC_FILESDONE, &CVacworkDICOMAnonDlg::OnStnClickedFilesdone)
 	ON_BN_CLICKED(IDC_BUTTON3, &CVacworkDICOMAnonDlg::OnBnClickedButton3)
+	//ON_STN_CLICKED(IDC_FILESDONE2, &CVacworkDICOMAnonDlg::OnStnClickedFilesdone2)
+	ON_STN_CLICKED(IDC_NUMDCMFILES, &CVacworkDICOMAnonDlg::OnStnClickedNumdcmfiles)
 END_MESSAGE_MAP()
 
 // CVacworkDICOMAnonDlg message handlers
@@ -83,7 +87,9 @@ END_MESSAGE_MAP()
 BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog(); 
-	DriveAttributes(m_outputDestination);
+	m_size =0;
+
+	//DriveAttributes(m_outputDestination);
 	UpdateData(FALSE);
 	
 	// Add "About..." menu item to system menu.
@@ -143,7 +149,10 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 
 	m_sourceDestination = m_sDataPath;
 	m_size= 0;
-	CalculateSize(m_sDataPath);
+	//CalculateSize(0);
+	DriveAttributes(m_sourceDestination);
+
+	UpdateData(TRUE);
 	//call on image moving function
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -203,6 +212,8 @@ void CVacworkDICOMAnonDlg::OnNMCustomdrawProgress1(NMHDR* pNMHDR, LRESULT* pResu
 	LPNMCUSTOMDRAW pNMCD = reinterpret_cast<LPNMCUSTOMDRAW>(pNMHDR);
 	// TODO: Add your control notification handler code here
 	*pResult = 0;
+	m_progress.SetRange(0, 100);
+	//m_progress.SetPos(75);
 }
 
 
@@ -218,7 +229,7 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1()
 	if (m_dlg.DoModal() == IDOK) {
 		m_sourceDestination = m_dlg.GetPathName();   // Use this to get the selected folder name 								  // after the dialog has closed
 		DriveAttributes(m_sourceDestination);// recalculate disk info for source folder selected
-		UpdateData(FALSE);   // To show updated folder in GUI
+		UpdateData(TRUE);   // To show updated folder in GUI
 	}
 }
 
@@ -232,22 +243,22 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2()
 	m_dlg.m_ofn.lpstrInitialDir = _T("C:\\");
 	if (m_dlg.DoModal() == IDOK) {
 		m_outputDestination = m_dlg.GetPathName();   // Use this to get the selected folder name 								  // after the dialog has closed
-		DriveAttributes(m_outputDestination);// recalculate disk info for source folder selected
+		//DriveAttributes(m_outputDestination);// recalculate disk info for DESTINTION folder selected
 		UpdateData(TRUE);   // To show updated folder in GUI
 	}
-
 }
 // Write own functions here
 
 //calc disk space
 void CVacworkDICOMAnonDlg::DriveAttributes(CString DirName)
 {
-	
+	lpFreeBytesAvailableToCaller = lpTotalNumberOfBytes = lpTotalNumberOfFreeBytes = 0;
 	GetDiskFreeSpaceEx(DirName, (PULARGE_INTEGER)&lpFreeBytesAvailableToCaller, (PULARGE_INTEGER)&lpTotalNumberOfBytes, (PULARGE_INTEGER)&lpTotalNumberOfFreeBytes);
 
 	m_freeBytes = lpFreeBytesAvailableToCaller / 1000000000;
 	m_capacity = lpTotalNumberOfBytes / 1000000000;
 	m_usedBytes = m_capacity - m_freeBytes;
+	UpdateData(FALSE);
 
 }
 //find size of files
@@ -283,35 +294,61 @@ void CVacworkDICOMAnonDlg::CalculateSize(CString DirName) {
 	FindClose(sh);
 	float a = 1000.00;
 	m_size = (float)m_size / a; // MB
-	//m_sizeDisp.Format(_T("%.2f"), m_size);
-
 	UpdateData(FALSE);
 }
 
-// invalid dir handler
+// LIST
+BOOL CVacworkDICOMAnonDlg::SourceList(CString DirName) {
+	if (!::SetCurrentDirectory(DirName))
+	{
+		return FALSE;
+	}
 
+	WIN32_FIND_DATA findData;
+	HANDLE hFind = ::FindFirstFile(_T("*.dcm"), &findData);
+	int count = 0;
+	while (hFind != INVALID_HANDLE_VALUE)
+	{
+		CString fileName = findData.cFileName;
+		mylist.push_back(fileName);
+		count++;
+
+		if (!::FindNextFile(hFind, &findData))
+		{
+			::FindClose(hFind);
+			hFind = INVALID_HANDLE_VALUE;
+
+			break;
+		}
+	}
+	m_Files = count;
+	UpdateData(FALSE);
+}
 //no space handler
 void CVacworkDICOMAnonDlg::OnStnClickedFilesdone()
 {
 	// TODO: Add your control notification handler code here
 }
 
-void CVacworkDICOMAnonDlg::MoveFiles() {
+void CVacworkDICOMAnonDlg::MoveFiles(CString destPath) {
 	//info about path
 	// get address of .raw image in source directory
 	std::ifstream sourceFile("C:\\Source Folder\\STN911_Uncorr_201977_15h56_7168x1920.raw", std::ifstream::binary);
-	std::ofstream destFile("C:\\Destination Folder\\NewFile.raw", std::ofstream::binary);
+	std::ofstream destFile((destPath + _T("\\NewFile.raw")), std::ofstream::binary);
 	
 	//get size of file
 	sourceFile.seekg(0, sourceFile.end);
 	std::streamsize size = sourceFile.tellg();
 	sourceFile.seekg(0);
 
-	// allocate memory for file content
-	char* buffer = new char[(long)fileSize];
-	// read content of infile
+
+	m_progress.SetPos(m_progressCount);
+
+	// read content of sourceFile
 	sourceFile.read(buffer, fileSize);
-	// write to outfile
+	m_progressCount = 50;
+	m_progress.SetPos(m_progressCount);
+	// write to destFile
 	destFile.write(buffer, fileSize);
 
 	// release dynamically-allocated memory
@@ -347,16 +384,27 @@ void CVacworkDICOMAnonDlg::OnBnClickedButton3()
 	//	return;
 	//}
 	//else{
-		MoveFiles();
-		//m_progressCount = 100;
-		//m_progress = m_progressCount;
-		//SetPos(m_progressCount);
-		//AfxMessageBox("Complete");
+	MoveFiles(m_outputDestination);
+	m_progressCount = 100;
+	m_progress.SetPos(m_progressCount);
+	//AfxMessageBox("Complete");
 		//m_progressCount = RESET;
 		//m_progress.SetPos(m_progressCount);
 		//m_numDCM = RESET;
 	//}
-		UpdateData(TRUE);
-	OnInitDialog();
+	UpdateData(TRUE);
+	//OnInitDialog();
 
+}
+
+
+//void CVacworkDICOMAnonDlg::OnStnClickedFilesdone2()
+//{
+//	// TODO: Add your control notification handler code here
+//}
+
+
+void CVacworkDICOMAnonDlg::OnStnClickedNumdcmfiles()
+{
+	// TODO: Add your control notification handler code here
 }
