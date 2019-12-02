@@ -138,6 +138,7 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 	DriveAttributes(m_sourceDestination);
 	UpdateData(TRUE);
 	
+	SourceList(m_sDataPath + _T("\\Images\\"));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -215,8 +216,8 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1()
 		UpdateData(TRUE);   // To show updated folder in GUI
 	}
 	CalculateSize(m_sourceDestination);
-	SourceList(m_sourceDestination);
 	UpdateData(TRUE);
+	SourceList(m_sourceDestination);
 }
 
 void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2()
