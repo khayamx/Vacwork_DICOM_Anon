@@ -6,7 +6,8 @@
 #include "Vacwork_DICOM_Anon.h"
 #include "Vacwork_DICOM_AnonDlg.h"
 #include "afxdialogex.h"
-
+#include <iostream>
+#include <fstream>
 
 
 #ifdef _DEBUG
@@ -295,83 +296,30 @@ void CVacworkDICOMAnonDlg::OnStnClickedFilesdone()
 	// TODO: Add your control notification handler code here
 }
 
-void CVacworkDICOMAnonDlg::MoveFiles(CString sourceDir, CString destDir) {
+void CVacworkDICOMAnonDlg::MoveFiles() {
 	//info about path
-	WIN32_FIND_DATAA data;
-	HANDLE sh = FindFirstFileA((sourceDir + "\\*"), &data);
 	// get address of .raw image in source directory
+	std::ifstream sourceFile("C:\\Source Folder\\STN911_Uncorr_201977_15h56_7168x1920.raw", std::ifstream::binary);
+	std::ofstream destFile("C:\\Destination Folder\\NewFile.raw", std::ofstream::binary);
+	
+	//get size of file
+	sourceFile.seekg(0, sourceFile.end);
+	std::streamsize size = sourceFile.tellg();
+	sourceFile.seekg(0);
 
-	// constructing these file objects doesn't open them
-	CFile sourceFile;
-	CFile destFile;
+	// allocate memory for file content
+	char* buffer = new char[(long)fileSize];
+	// read content of infile
+	sourceFile.read(buffer, fileSize);
+	// write to outfile
+	destFile.write(buffer, fileSize);
 
-	// we'll use a CFileException object to get error information
-	CFileException ex;
+	// release dynamically-allocated memory
+	delete[] buffer;
 
-	// open the source file for reading
-	if (!sourceFile.Open(sourceDir, CFile::modeRead | CFile::shareDenyWrite, &ex))
-	{
-		// complain if an error happened
-		// no need to delete the ex object
-
-		//TCHAR szError[1024];
-		//ex.GetErrorMessage(szError, 1024);
-		//need to print error message in pop up window
-		//AfxMessageBox("Couldn't open source file");
-		return;
-	}
-	else
-	{
-		//if (!destFile.Open(destDir, CFile::modeWrite | CFile::shareExclusive | CFile::modeCreate, &ex))
-		//{
-		//	TCHAR szError[1024];
-		//	ex.GetErrorMessage(szError, 1024);
-		//	//need to print error message in pop up window
-		//    //_tprintf_s(_T("Couldn't open source file: %1024s"), szError);
-
-		//	sourceFile.Close();
-		//	return false;
-		//}
-
-		//BYTE buffer[4096];
-		DWORD dwRead;
-
-		// Read in 4-byte blocks,
-		// remember how many bytes were actually read,
-		// and try to write that many out. This loop ends
-		// when there are no more bytes to read.
-		do{
-			int pos = 0;
-			for (int i = 0; i < width; i++) {
-				pos += i;
-				for (int j= 0; j < height; j++) {
-					pos += j;
-					dwRead = sourceFile.Read(readBuffer, array);
-					destFile.Write(readBuffer, dwRead);
-					// also need position
-					m_progress = (pos / array) * 100;
-				}
-			}
-		} while ( dwRead > 0);
-
-		// Close both files
-
-		destFile.Close();
-		sourceFile.Close();
-	}
-
-	//return true;
-
-	//get file name
-	//get directory path
-
-	//write that address to buffer pointer
-	//copy raw file from source Dir into Readbuffer
-	//copy buffer into other space
-	//write to destination Dir
-
-
-
+	sourceFile.close();
+	destFile.close();
+	
 }
 /*
 void CVacworkDICOMAnonDlg::Convert() {
@@ -399,9 +347,9 @@ void CVacworkDICOMAnonDlg::OnBnClickedButton3()
 	//	return;
 	//}
 	//else{
-		MoveFiles(m_sourceDestination, m_outputDestination);
-		m_progressCount = 100;
-		m_progress = m_progressCount;
+		MoveFiles();
+		//m_progressCount = 100;
+		//m_progress = m_progressCount;
 		//SetPos(m_progressCount);
 		//AfxMessageBox("Complete");
 		//m_progressCount = RESET;

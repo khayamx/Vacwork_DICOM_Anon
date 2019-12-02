@@ -16,8 +16,8 @@ public:
 	void DriveAttributes(CString DirName);
 	void CalculateSize(CString DirName);
 	//void Convert();
-	void MoveFiles(CString sourceDir, CString destDir);
-
+	//void MoveFiles(CString sourceDir, CString destDir);
+	void MoveFiles();
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -77,7 +77,7 @@ private:
 	BYTE readBuffer[7168][1920];
 	BYTE writeBuffer[7168][1920];
 	// name of .raw file    'STN911_Uncorr_201977_15h56_7168x1920'
-	const char* fileName = "STN911_Uncorr_201977_15h56_7168x1920";
+	const char* fileName = "STN911_Uncorr_201977_15h56_7168x1920.raw";
 
 	//progress counter variables
 	//1 pixel is one unit of processing = 4 bytes/32 bits
