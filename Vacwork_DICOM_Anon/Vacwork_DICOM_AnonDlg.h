@@ -17,7 +17,7 @@ public:
 	//void fc(type paramName);
 	void DriveAttributes(CString DirName);
 	void CalculateSize(CString DirName);
-	void MoveFiles(CString destPath);
+	void MoveFiles();
 	BOOL SourceList(CString DirName);
 
 	std::vector<CString> mylist;

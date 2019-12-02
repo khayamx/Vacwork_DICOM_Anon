@@ -1,5 +1,4 @@
 // Vacwork_DICOM_AnonDlg.cpp : implementation file
-//
 
 #include "pch.h"
 #include "framework.h"
@@ -309,11 +308,11 @@ BOOL CVacworkDICOMAnonDlg::SourceList(CString DirName) {
 }
 
 
-void CVacworkDICOMAnonDlg::MoveFiles(CString destPath) {
+void CVacworkDICOMAnonDlg::MoveFiles() {
 	//info about path
 	// get address of .raw image in source directory
 	std::ifstream sourceFile("C:\\Source Folder\\STN911_Uncorr_201977_15h56_7168x1920.raw", std::ifstream::binary);
-	std::ofstream destFile((destPath + _T("\\NewFile.raw")), std::ofstream::binary);
+	std::ofstream destFile("C::Destination Folder\\NewFile.raw", std::ofstream::binary);
 	
 	//get size of file
 	sourceFile.seekg(0, sourceFile.end);
@@ -331,7 +330,7 @@ void CVacworkDICOMAnonDlg::MoveFiles(CString destPath) {
 	destFile.write(buffer, fileSize);
 
 	// release dynamically-allocated memory
-	delete[] buffer;
+	//delete[] buffer;
 
 	sourceFile.close();
 	destFile.close();
@@ -341,24 +340,11 @@ void CVacworkDICOMAnonDlg::MoveFiles(CString destPath) {
 
 void CVacworkDICOMAnonDlg::OnBnClickedButton3()
 {//RUN BUTTON
-	// TODO: Add your control notification handler code here
 	UpdateData(TRUE);
-	//if (lpFreeBytesAvailable < m_dirSize) //1.0 GB
-	//{
-	//	AfxMessageBox("Not enough disk space available..");
-	//	return;
-	//}
-	//else{
-	MoveFiles(m_outputDestination);
+	MoveFiles();
 	m_progressCount = 100;
 	m_progress.SetPos(m_progressCount);
-	//AfxMessageBox("Complete");
-		//m_progressCount = RESET;
-		//m_progress.SetPos(m_progressCount);
-		//m_numDCM = RESET;
-	//}
 	UpdateData(TRUE);
-	//OnInitDialog();
 
 }
 

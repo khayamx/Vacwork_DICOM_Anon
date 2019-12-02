@@ -1,6 +1,6 @@
 ﻿  Vacwork_DICOM_AnonDlg.cpp
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(242,45): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(243,36): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(279,25): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(309): warning C4715: 'CVacworkDICOMAnonDlg::SourceList': not all control paths return a value
+C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(241,45): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(242,36): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(278,25): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(308): warning C4715: 'CVacworkDICOMAnonDlg::SourceList': not all control paths return a value
   Vacwork_DICOM_Anon.vcxproj -> C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Debug\Vacwork_DICOM_Anon.exe
