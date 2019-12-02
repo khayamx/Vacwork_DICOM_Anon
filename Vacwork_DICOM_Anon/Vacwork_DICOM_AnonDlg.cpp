@@ -76,10 +76,7 @@ BEGIN_MESSAGE_MAP(CVacworkDICOMAnonDlg, CDialogEx)
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_PROGRESS1, &CVacworkDICOMAnonDlg::OnNMCustomdrawProgress1)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE1, &CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE2, &CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2)
-	ON_STN_CLICKED(IDC_FILESDONE, &CVacworkDICOMAnonDlg::OnStnClickedFilesdone)
-	ON_BN_CLICKED(IDC_BUTTON3, &CVacworkDICOMAnonDlg::OnBnClickedButton3)
-	//ON_STN_CLICKED(IDC_FILESDONE2, &CVacworkDICOMAnonDlg::OnStnClickedFilesdone2)
-	ON_STN_CLICKED(IDC_NUMDCMFILES, &CVacworkDICOMAnonDlg::OnStnClickedNumdcmfiles)
+	ON_BN_CLICKED(IDC_RUN, &CVacworkDICOMAnonDlg::OnBnClickedButton3)
 END_MESSAGE_MAP()
 
 // CVacworkDICOMAnonDlg message handlers
@@ -116,14 +113,7 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
-	// enable close and minimize buttons
-	//close box
-	//EnableMenuItem(GetSystemMenu(FALSE), SC_CLOSE, MF_BYCOMMAND | MF_ENABLED);
 	
-	//minimize box
-	//SetWindowLong(hwnd, GWL_STYLE, GetWindowLong(hwnd, GWL_STYLE) | WS_MINIMIZEBOX);
-
-
 	//Registry data retrival 
 	HKEY hKey;
 	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\WOW6432Node\\LODOX\\DBSERVER"), NULL, KEY_READ, &hKey) != ERROR_SUCCESS) //Opening Registry Key
@@ -138,22 +128,16 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 	CString m_sDataPath;
 
 	if (strlen(cbDataPC) > 0)
-	{
-		m_sDataPath.Format(_T("\\\\%s\\"), cbDataPC);
-	}
+	{m_sDataPath.Format(_T("\\\\%s\\"), cbDataPC); }
 
 	if (strlen(cbDataPath) > 0)
-	{
-		m_sDataPath.AppendFormat(_T("%s"), cbDataPath);
-	}
+	{m_sDataPath.AppendFormat(_T("%s"), cbDataPath);}
 
 	m_sourceDestination = m_sDataPath;
 	m_size= 0;
-	//CalculateSize(0);
 	DriveAttributes(m_sourceDestination);
-
 	UpdateData(TRUE);
-	//call on image moving function
+	
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -222,28 +206,27 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1()
 	// TODO:  Add your control notification handler code here
 
 	CFolderPickerDialog m_dlg;
-	//CString m_Folder;
 
 	m_dlg.m_ofn.lpstrTitle = _T("Source Folder");
 	m_dlg.m_ofn.lpstrInitialDir = _T("C:\\");
 	if (m_dlg.DoModal() == IDOK) {
 		m_sourceDestination = m_dlg.GetPathName();   // Use this to get the selected folder name 								  // after the dialog has closed
-		DriveAttributes(m_sourceDestination);// recalculate disk info for source folder selected
+		//SourceList(m_sourceDestination);
 		UpdateData(TRUE);   // To show updated folder in GUI
 	}
+	CalculateSize(m_sourceDestination);
+	SourceList(m_sourceDestination);
+	UpdateData(TRUE);
 }
 
 void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2()
 {
-	// TODO:  Add your control notification handler code here
 	CFolderPickerDialog m_dlg;
-	//CString m_Folder;
-
+	
 	m_dlg.m_ofn.lpstrTitle = _T("Destination Folder");
 	m_dlg.m_ofn.lpstrInitialDir = _T("C:\\");
 	if (m_dlg.DoModal() == IDOK) {
 		m_outputDestination = m_dlg.GetPathName();   // Use this to get the selected folder name 								  // after the dialog has closed
-		//DriveAttributes(m_outputDestination);// recalculate disk info for DESTINTION folder selected
 		UpdateData(TRUE);   // To show updated folder in GUI
 	}
 }
@@ -259,8 +242,8 @@ void CVacworkDICOMAnonDlg::DriveAttributes(CString DirName)
 	m_capacity = lpTotalNumberOfBytes / 1000000000;
 	m_usedBytes = m_capacity - m_freeBytes;
 	UpdateData(FALSE);
-
 }
+
 //find size of files
 void CVacworkDICOMAnonDlg::CalculateSize(CString DirName) {
 
@@ -271,7 +254,6 @@ void CVacworkDICOMAnonDlg::CalculateSize(CString DirName) {
 	{
 		return;
 	}
-
 	do
 	{
 		// skip current and parent
@@ -324,11 +306,7 @@ BOOL CVacworkDICOMAnonDlg::SourceList(CString DirName) {
 	m_Files = count;
 	UpdateData(FALSE);
 }
-//no space handler
-void CVacworkDICOMAnonDlg::OnStnClickedFilesdone()
-{
-	// TODO: Add your control notification handler code here
-}
+
 
 void CVacworkDICOMAnonDlg::MoveFiles(CString destPath) {
 	//info about path
@@ -358,21 +336,7 @@ void CVacworkDICOMAnonDlg::MoveFiles(CString destPath) {
 	destFile.close();
 	
 }
-/*
-void CVacworkDICOMAnonDlg::Convert() {
-	int retcode = DbInitLib(_T(""));
-	CString errorMessage = "Database not initialized.";
-	if (retcode != DB_OK)
-	{
-		AfxMessageBox(errorMessage);
-		return;
-	}
-	else
-	{
 
-
-	}
-}*/
 
 void CVacworkDICOMAnonDlg::OnBnClickedButton3()
 {//RUN BUTTON
@@ -397,14 +361,3 @@ void CVacworkDICOMAnonDlg::OnBnClickedButton3()
 
 }
 
-
-//void CVacworkDICOMAnonDlg::OnStnClickedFilesdone2()
-//{
-//	// TODO: Add your control notification handler code here
-//}
-
-
-void CVacworkDICOMAnonDlg::OnStnClickedNumdcmfiles()
-{
-	// TODO: Add your control notification handler code here
-}

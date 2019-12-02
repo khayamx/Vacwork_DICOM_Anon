@@ -10,7 +10,7 @@
 #define IDC_PROGRESS1                   1004
 #define IDC_MFCEDITBROWSE1              1006
 #define IDC_MFCEDITBROWSE2              1007
-#define IDC_BUTTON3                     1014
+#define IDC_RUN                         1014
 #define IDC_SOURCESIZE                  1018
 #define IDC_FREEBYTES                   1020
 #define IDC_USEDBYTES                   1021
