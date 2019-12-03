@@ -119,6 +119,7 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 	{
 		return FALSE; //Cannot open key
 	}
+
 	PCReturn = RegQueryValueEx(hKey, _T("ComputerName"), NULL, &type, (LPBYTE)&cbDataPC, &sizePC);
 	pathReturn = RegQueryValueEx(hKey, _T("ShareName"), NULL, &type, (LPBYTE)&cbDataPath, &sizePath);
 	RegCloseKey(hKey);
@@ -312,7 +313,7 @@ void CVacworkDICOMAnonDlg::MoveFiles() {
 	//info about path
 	// get address of .raw image in source directory
 	std::ifstream sourceFile("C:\\Source Folder\\STN911_Uncorr_201977_15h56_7168x1920.raw", std::ifstream::binary);
-	std::ofstream destFile("C::Destination Folder\\NewFile.raw", std::ofstream::binary);
+	std::ofstream destFile("C:\\Destination Folder\\NewFile.raw", std::ofstream::binary);
 	
 	//get size of file
 	sourceFile.seekg(0, sourceFile.end);
@@ -321,6 +322,8 @@ void CVacworkDICOMAnonDlg::MoveFiles() {
 
 
 	m_progress.SetPos(m_progressCount);
+	// allocate memory for file content
+	char* buffer = new char[(long)fileSize];
 
 	// read content of sourceFile
 	sourceFile.read(buffer, fileSize);
@@ -330,7 +333,7 @@ void CVacworkDICOMAnonDlg::MoveFiles() {
 	destFile.write(buffer, fileSize);
 
 	// release dynamically-allocated memory
-	//delete[] buffer;
+	delete[] buffer;
 
 	sourceFile.close();
 	destFile.close();

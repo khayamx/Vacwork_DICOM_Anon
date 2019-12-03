@@ -73,7 +73,7 @@ private:
 
 	//variables for reading files
 	int fileSize = 55050240;
-	char* buffer = new char[(long)fileSize];
+	//char* buffer = new char[(long)fileSize];
 	int width = 7168;
 	int height = 1920;
 
