@@ -85,12 +85,9 @@ private:
 
 	
 	int m_Files;
-	int m_dcmFilesComplt = 2;
+	int m_dcmFilesComplt;
 
 
 public:
-	afx_msg void OnStnClickedFilesdone();
 	afx_msg void OnBnClickedButton3();
-	afx_msg void OnStnClickedFilesdone2();
-	afx_msg void OnStnClickedNumdcmfiles();
-};
+	};

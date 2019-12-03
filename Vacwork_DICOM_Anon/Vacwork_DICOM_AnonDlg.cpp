@@ -65,7 +65,6 @@ void CVacworkDICOMAnonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_FILESDONE, m_dcmFilesComplt);
 	DDX_Text(pDX, IDC_PROGRESSCOUNT, m_progressCount);
 	DDX_Control(pDX, IDC_PROGRESS1, m_progress);
-
 }
 
 BEGIN_MESSAGE_MAP(CVacworkDICOMAnonDlg, CDialogEx)
@@ -216,8 +215,8 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1()
 		UpdateData(TRUE);   // To show updated folder in GUI
 	}
 	CalculateSize(m_sourceDestination);
-	UpdateData(TRUE);
 	SourceList(m_sourceDestination);
+	UpdateData(TRUE);
 }
 
 void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2()
@@ -348,6 +347,4 @@ void CVacworkDICOMAnonDlg::OnBnClickedButton3()
 	m_progressCount = 100;
 	m_progress.SetPos(m_progressCount);
 	UpdateData(TRUE);
-
 }
-
