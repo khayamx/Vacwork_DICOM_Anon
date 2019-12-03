@@ -66,7 +66,7 @@ void CVacworkDICOMAnonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_USEDBYTES, m_usedBytes);
 	DDX_Text(pDX, IDC_CAP, m_capacity);
 	DDX_Text(pDX, IDC_NUMDCMFILES, m_Files);
-	DDX_Text(pDX, IDC_FILESDONE, m_dcmFilesComplt);
+	DDX_Text(pDX, IDC_FILESDONE, m_FilesComplete);
 	DDX_Text(pDX, IDC_PROGRESSCOUNT, m_progressCount);
 	DDX_Control(pDX, IDC_PROGRESS1, m_progress);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE1, m_sourceDestination);
@@ -276,30 +276,23 @@ BOOL CVacworkDICOMAnonDlg::SourceList(CString DirName) {
 	UpdateData(FALSE);
 }
 
-
-void CVacworkDICOMAnonDlg::MoveFile(CString inputFName) {//input parameter needs to be a constacnt char w/ souce file name
+void CVacworkDICOMAnonDlg::moveFile(CString inputFName) {//input parameter needs to be a constacnt char w/ souce file name
 	//need to refer to input file name of source file name of source path
-
+	//using namespace ATL;
+	CString sourcePath = m_sourceDestination + "\\";
+	CString destinationPath = m_outputDestination + "\\";
 	//add the two
-	m_sourceDestination += "\\";
-	m_sourceDestination += (inputFName);
-
-	CT2A pszConvertedAnsiString1(m_sourceDestination);
+	//sourcePath = m_sourceDestination + "\\";
+	sourcePath += (inputFName);
+	CT2A pszConvertedAnsiString1(sourcePath);
 	std::string strInputDest(pszConvertedAnsiString1);
 	//refer to input file
 	//std::ifstream sourceFile("C:\\Source Folder\\STN911_Uncorr_201977_15h56_7168x1920.raw", std::ifstream::binary);
 	std::ifstream sourceFile(strInputDest, std::ifstream::binary);
 
-	//need to refer to output file
-	//name of source file
-	//name of source path
-	//add the two
-	m_outputDestination += "\\";
-	inputFName.Remove(_T('.raw'));
-	m_outputDestination += (inputFName);
-	m_outputDestination += "Anon";
-	//m_outputDestination += _T("\\NewFile.raw");
-	CT2A pszConvertedAnsiString2(m_outputDestination);
+
+	destinationPath += (inputFName);
+	CT2A pszConvertedAnsiString2(destinationPath);
 	std::string strOutputDest(pszConvertedAnsiString2);
     // create destination file
 	std::ofstream destFile(strOutputDest, std::ofstream::binary);
@@ -316,17 +309,15 @@ void CVacworkDICOMAnonDlg::MoveFile(CString inputFName) {//input parameter needs
 
 	// read content of sourceFile
 	sourceFile.read(buffer, fileSize);
-	m_progressCount = 50;
-	m_progress.SetPos(m_progressCount);
+	
 	// write to destFile
 	destFile.write(buffer, fileSize);
 
-	// release dynamically-allocated memory
+	//clean up
+	// release dynamically-allocated memory 
 	delete[] buffer;
-
 	sourceFile.close();
 	destFile.close();
-	
 }
 
 void CVacworkDICOMAnonDlg::StepThroughFiles() {
@@ -334,11 +325,13 @@ void CVacworkDICOMAnonDlg::StepThroughFiles() {
 	int i;
 	for (i = 0; i < m_Files; i++) {
 		//make i number of copies of the file
-		MoveFile(mylist[i]);
+		moveFile(mylist[i]);
+		m_progressCount = (i/m_Files)*100;
+		m_progress.SetPos(m_progressCount);
+		m_FilesComplete = i;
+		UpdateData(FALSE);
 		//name them the same as OG files
 	}
-
-
 }
 
 void CVacworkDICOMAnonDlg::OnBnClickedRUN()
@@ -348,5 +341,5 @@ void CVacworkDICOMAnonDlg::OnBnClickedRUN()
 	StepThroughFiles();
 	m_progressCount = 100;
 	m_progress.SetPos(m_progressCount);
-	UpdateData(TRUE);
+	UpdateData(FALSE);
 }

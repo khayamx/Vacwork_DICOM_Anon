@@ -17,7 +17,7 @@ public:
 	void DriveAttributes(CString DirName);
 	void CalculateSize(CString DirName);
 	//void MoveFiles();
-	void MoveFile(CString inputFName);
+	void moveFile(CString inputFName);
 	BOOL SourceList(CString DirName);
 	void StepThroughFiles();
 
@@ -85,9 +85,8 @@ private:
 	int posInFile = 0;
 	int array = fileSize / 4;
 
-	char destPath[255];
 	int m_Files;
-	int m_dcmFilesComplt;
+	int m_FilesComplete;
 
 
 public:
