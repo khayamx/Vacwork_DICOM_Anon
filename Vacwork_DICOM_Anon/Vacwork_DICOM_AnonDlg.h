@@ -13,12 +13,12 @@ class CVacworkDICOMAnonDlg : public CDialogEx
 // Construction
 public:
 	CVacworkDICOMAnonDlg(CWnd* pParent = nullptr);	// standard constructor
-	//insert functions I have crreated
-	//void fc(type paramName);
+	//insert functions I have created
 	void DriveAttributes(CString DirName);
 	void CalculateSize(CString DirName);
 	void MoveFiles();
 	BOOL SourceList(CString DirName);
+	void StepThroughFiles();
 
 	std::vector<CString> mylist;
 
@@ -83,11 +83,11 @@ private:
 	int posInFile = 0;
 	int array = fileSize / 4;
 
-	
+	char destPath[255];
 	int m_Files;
 	int m_dcmFilesComplt;
 
 
 public:
-	afx_msg void OnBnClickedButton3();
+	afx_msg void OnBnClickedRUN();
 	};

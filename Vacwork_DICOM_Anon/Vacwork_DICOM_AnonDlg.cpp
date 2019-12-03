@@ -7,6 +7,10 @@
 #include "afxdialogex.h"
 #include <iostream>
 #include <fstream>
+#include <stdio.h>
+#include <string.h>
+#include <cstring>
+#include <string>
 
 
 #ifdef _DEBUG
@@ -65,6 +69,10 @@ void CVacworkDICOMAnonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_FILESDONE, m_dcmFilesComplt);
 	DDX_Text(pDX, IDC_PROGRESSCOUNT, m_progressCount);
 	DDX_Control(pDX, IDC_PROGRESS1, m_progress);
+	DDX_Text(pDX, IDC_MFCEDITBROWSE1, m_sourceDestination);
+	DDX_Text(pDX, IDC_MFCEDITBROWSE2, m_outputDestination);
+
+
 }
 
 BEGIN_MESSAGE_MAP(CVacworkDICOMAnonDlg, CDialogEx)
@@ -74,18 +82,15 @@ BEGIN_MESSAGE_MAP(CVacworkDICOMAnonDlg, CDialogEx)
 	ON_NOTIFY(NM_CUSTOMDRAW, IDC_PROGRESS1, &CVacworkDICOMAnonDlg::OnNMCustomdrawProgress1)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE1, &CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE2, &CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2)
-	ON_BN_CLICKED(IDC_RUN, &CVacworkDICOMAnonDlg::OnBnClickedButton3)
+	ON_BN_CLICKED(IDC_RUN, &CVacworkDICOMAnonDlg::OnBnClickedRUN)
 END_MESSAGE_MAP()
 
-// CVacworkDICOMAnonDlg message handlers
+//CVacworkDICOMAnonDlg message handlers
 
 BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog(); 
 	m_size =0;
-
-	//DriveAttributes(m_outputDestination);
-	UpdateData(FALSE);
 	
 	// Add "About..." menu item to system menu.
 
@@ -111,33 +116,11 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 	//  when the application's main window is not a dialog
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
+
+	DriveAttributes(_T("C://"));
+	UpdateData(FALSE);
 	
-	//Registry data retrival 
-	HKEY hKey;
-	if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, _T("SOFTWARE\\WOW6432Node\\LODOX\\DBSERVER"), NULL, KEY_READ, &hKey) != ERROR_SUCCESS) //Opening Registry Key
-	{
-		return FALSE; //Cannot open key
-	}
-
-	PCReturn = RegQueryValueEx(hKey, _T("ComputerName"), NULL, &type, (LPBYTE)&cbDataPC, &sizePC);
-	pathReturn = RegQueryValueEx(hKey, _T("ShareName"), NULL, &type, (LPBYTE)&cbDataPath, &sizePath);
-	RegCloseKey(hKey);
-
-	// TODO: Add extra initialization here
-	CString m_sDataPath;
-
-	if (strlen(cbDataPC) > 0)
-	{m_sDataPath.Format(_T("\\\\%s\\"), cbDataPC); }
-
-	if (strlen(cbDataPath) > 0)
-	{m_sDataPath.AppendFormat(_T("%s"), cbDataPath);}
-
-	m_sourceDestination = m_sDataPath;
-	m_size= 0;
-	DriveAttributes(m_sourceDestination);
-	UpdateData(TRUE);
-	
-	SourceList(m_sDataPath + _T("\\Images\\"));
+	//SourceList(m_sDataPath + _T("\\Images\\"));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -204,31 +187,21 @@ void CVacworkDICOMAnonDlg::OnNMCustomdrawProgress1(NMHDR* pNMHDR, LRESULT* pResu
 void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1()
 {
 	// TODO:  Add your control notification handler code here
-
-	CFolderPickerDialog m_dlg;
-
-	m_dlg.m_ofn.lpstrTitle = _T("Source Folder");
-	m_dlg.m_ofn.lpstrInitialDir = _T("C:\\");
-	if (m_dlg.DoModal() == IDOK) {
-		m_sourceDestination = m_dlg.GetPathName();   // Use this to get the selected folder name 								  // after the dialog has closed
-		//SourceList(m_sourceDestination);
-		UpdateData(TRUE);   // To show updated folder in GUI
-	}
+	UpdateData(TRUE);
 	CalculateSize(m_sourceDestination);
+
 	SourceList(m_sourceDestination);
 	UpdateData(TRUE);
 }
 
 void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2()
 {
-	CFolderPickerDialog m_dlg;
-	
-	m_dlg.m_ofn.lpstrTitle = _T("Destination Folder");
-	m_dlg.m_ofn.lpstrInitialDir = _T("C:\\");
-	if (m_dlg.DoModal() == IDOK) {
-		m_outputDestination = m_dlg.GetPathName();   // Use this to get the selected folder name 								  // after the dialog has closed
-		UpdateData(TRUE);   // To show updated folder in GUI
-	}
+	/*CFolderPickerDialog m_dlg;*/
+	//CFileDialog FileCheck;
+	UpdateData(TRUE);
+	CString destPath = m_outputDestination;
+
+	UpdateData(TRUE);
 }
 // Write own functions here
 
@@ -311,8 +284,17 @@ BOOL CVacworkDICOMAnonDlg::SourceList(CString DirName) {
 void CVacworkDICOMAnonDlg::MoveFiles() {
 	//info about path
 	// get address of .raw image in source directory
+
+	//strcpy(destPath, m_outputDestination);
+	//destPath = 
+	m_outputDestination += _T("\\NewFile.raw");
+
+	CT2A pszConvertedAnsiString(m_outputDestination);
+
+	std::string strOutputDest(pszConvertedAnsiString);
+
 	std::ifstream sourceFile("C:\\Source Folder\\STN911_Uncorr_201977_15h56_7168x1920.raw", std::ifstream::binary);
-	std::ofstream destFile("C:\\Destination Folder\\NewFile.raw", std::ofstream::binary);
+	std::ofstream destFile(strOutputDest, std::ofstream::binary);
 	
 	//get size of file
 	sourceFile.seekg(0, sourceFile.end);
@@ -339,8 +321,18 @@ void CVacworkDICOMAnonDlg::MoveFiles() {
 	
 }
 
+void CVacworkDICOMAnonDlg::StepThroughFiles() {
+	//USE NUMBER OF DEICOM FILES FOUND AS COUNTER
 
-void CVacworkDICOMAnonDlg::OnBnClickedButton3()
+	//for () {
+	//	//make i number of copies of the file 
+	//	//name them the same as OG files
+
+	//}
+
+
+}
+void CVacworkDICOMAnonDlg::OnBnClickedRUN()
 {//RUN BUTTON
 	UpdateData(TRUE);
 	MoveFiles();
