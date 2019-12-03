@@ -71,8 +71,6 @@ void CVacworkDICOMAnonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PROGRESS1, m_progress);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE1, m_sourceDestination);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE2, m_outputDestination);
-
-
 }
 
 BEGIN_MESSAGE_MAP(CVacworkDICOMAnonDlg, CDialogEx)
@@ -257,7 +255,8 @@ BOOL CVacworkDICOMAnonDlg::SourceList(CString DirName) {
 	}
 
 	WIN32_FIND_DATA findData;
-	HANDLE hFind = ::FindFirstFile(_T("*.dcm"), &findData);
+	//HANDLE hFind = ::FindFirstFile(_T("*.dcm"), &findData);
+	HANDLE hFind = ::FindFirstFile(_T("*.raw"), &findData);
 	int count = 0;
 	while (hFind != INVALID_HANDLE_VALUE)
 	{
@@ -278,10 +277,8 @@ BOOL CVacworkDICOMAnonDlg::SourceList(CString DirName) {
 }
 
 
-void CVacworkDICOMAnonDlg::MoveFile(const char* inputFName) {//input parameter needs to be a constacnt char w/ souce file name
-	//need to refer to input file
-	//name of source file
-	//name of source path
+void CVacworkDICOMAnonDlg::MoveFile(CString inputFName) {//input parameter needs to be a constacnt char w/ souce file name
+	//need to refer to input file name of source file name of source path
 
 	//add the two
 	m_sourceDestination += "\\";
@@ -297,7 +294,11 @@ void CVacworkDICOMAnonDlg::MoveFile(const char* inputFName) {//input parameter n
 	//name of source file
 	//name of source path
 	//add the two
-	m_outputDestination += _T("\\NewFile.raw");
+	m_outputDestination += "\\";
+	inputFName.Remove(_T('.raw'));
+	m_outputDestination += (inputFName);
+	m_outputDestination += "Anon";
+	//m_outputDestination += _T("\\NewFile.raw");
 	CT2A pszConvertedAnsiString2(m_outputDestination);
 	std::string strOutputDest(pszConvertedAnsiString2);
     // create destination file
@@ -330,19 +331,21 @@ void CVacworkDICOMAnonDlg::MoveFile(const char* inputFName) {//input parameter n
 
 void CVacworkDICOMAnonDlg::StepThroughFiles() {
 	//USE NUMBER OF DEICOM FILES FOUND AS COUNTER
-
-	//for () {
-	//	//make i number of copies of the file 
-	//	//name them the same as OG files
-
-	//}
+	int i;
+	for (i = 0; i < m_Files; i++) {
+		//make i number of copies of the file
+		MoveFile(mylist[i]);
+		//name them the same as OG files
+	}
 
 
 }
+
 void CVacworkDICOMAnonDlg::OnBnClickedRUN()
 {//RUN BUTTON
 	UpdateData(TRUE);
-	MoveFile(fileName);
+	//MoveFile(fileName);
+	StepThroughFiles();
 	m_progressCount = 100;
 	m_progress.SetPos(m_progressCount);
 	UpdateData(TRUE);

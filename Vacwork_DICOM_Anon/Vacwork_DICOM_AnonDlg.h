@@ -17,11 +17,12 @@ public:
 	void DriveAttributes(CString DirName);
 	void CalculateSize(CString DirName);
 	//void MoveFiles();
-	void MoveFile(const char* inputFName);
+	void MoveFile(CString inputFName);
 	BOOL SourceList(CString DirName);
 	void StepThroughFiles();
 
 	std::vector<CString> mylist;
+	//std::vector<CString> NewNames = {"File1.","",""};
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
