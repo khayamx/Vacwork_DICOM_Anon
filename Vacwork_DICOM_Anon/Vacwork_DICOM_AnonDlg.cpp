@@ -186,18 +186,15 @@ void CVacworkDICOMAnonDlg::OnNMCustomdrawProgress1(NMHDR* pNMHDR, LRESULT* pResu
 
 void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1()
 {
-	// TODO:  Add your control notification handler code here
 	UpdateData(TRUE);
 	CalculateSize(m_sourceDestination);
-
 	SourceList(m_sourceDestination);
 	UpdateData(TRUE);
 }
 
 void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2()
 {
-	/*CFolderPickerDialog m_dlg;*/
-	//CFileDialog FileCheck;
+
 	UpdateData(TRUE);
 	CString destPath = m_outputDestination;
 
@@ -281,19 +278,29 @@ BOOL CVacworkDICOMAnonDlg::SourceList(CString DirName) {
 }
 
 
-void CVacworkDICOMAnonDlg::MoveFiles() {
-	//info about path
-	// get address of .raw image in source directory
+void CVacworkDICOMAnonDlg::MoveFile(const char* inputFName) {//input parameter needs to be a constacnt char w/ souce file name
+	//need to refer to input file
+	//name of source file
+	//name of source path
 
-	//strcpy(destPath, m_outputDestination);
-	//destPath = 
+	//add the two
+	m_sourceDestination += "\\";
+	m_sourceDestination += (inputFName);
+
+	CT2A pszConvertedAnsiString1(m_sourceDestination);
+	std::string strInputDest(pszConvertedAnsiString1);
+	//refer to input file
+	//std::ifstream sourceFile("C:\\Source Folder\\STN911_Uncorr_201977_15h56_7168x1920.raw", std::ifstream::binary);
+	std::ifstream sourceFile(strInputDest, std::ifstream::binary);
+
+	//need to refer to output file
+	//name of source file
+	//name of source path
+	//add the two
 	m_outputDestination += _T("\\NewFile.raw");
-
-	CT2A pszConvertedAnsiString(m_outputDestination);
-
-	std::string strOutputDest(pszConvertedAnsiString);
-
-	std::ifstream sourceFile("C:\\Source Folder\\STN911_Uncorr_201977_15h56_7168x1920.raw", std::ifstream::binary);
+	CT2A pszConvertedAnsiString2(m_outputDestination);
+	std::string strOutputDest(pszConvertedAnsiString2);
+    // create destination file
 	std::ofstream destFile(strOutputDest, std::ofstream::binary);
 	
 	//get size of file
@@ -304,7 +311,7 @@ void CVacworkDICOMAnonDlg::MoveFiles() {
 
 	m_progress.SetPos(m_progressCount);
 	// allocate memory for file content
-	char* buffer = new char[(long)fileSize];
+	char* buffer = new char[fileSize];
 
 	// read content of sourceFile
 	sourceFile.read(buffer, fileSize);
@@ -335,7 +342,7 @@ void CVacworkDICOMAnonDlg::StepThroughFiles() {
 void CVacworkDICOMAnonDlg::OnBnClickedRUN()
 {//RUN BUTTON
 	UpdateData(TRUE);
-	MoveFiles();
+	MoveFile(fileName);
 	m_progressCount = 100;
 	m_progress.SetPos(m_progressCount);
 	UpdateData(TRUE);

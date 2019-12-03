@@ -16,7 +16,8 @@ public:
 	//insert functions I have created
 	void DriveAttributes(CString DirName);
 	void CalculateSize(CString DirName);
-	void MoveFiles();
+	//void MoveFiles();
+	void MoveFile(const char* inputFName);
 	BOOL SourceList(CString DirName);
 	void StepThroughFiles();
 
