@@ -331,8 +331,9 @@ void CVacworkDICOMAnonDlg::StepThroughFiles() {
 	int i;
 	for (i = 0; i < m_Files; i++) {
 		//make i number of copies of the file
-		importer.Import(mylist[i]);
+		//importer.Import(mylist[i]);
 		importer.GetImagePixelDataFromDataset(cols, rows);
+		importer.Import(mylist[i]);
 
 		//moveFile(mylist[i]);
 		m_progressCount = ((i+1) /m_Files)*100;
