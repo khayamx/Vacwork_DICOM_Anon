@@ -23,13 +23,13 @@
     <ProjectGuid>{3322C692-D0D0-43DD-8FDD-DE9B3CAEFDFB}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
     <RootNamespace>VacworkDICOMAnon</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
@@ -44,7 +44,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v142</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
@@ -99,6 +99,7 @@
       <SubSystem>Windows</SubSystem>
       <StackReserveSize>140000000</StackReserveSize>
       <StackCommitSize>120000000</StackCommitSize>
+      <AdditionalDependencies>dcmdata.lib;oflog.lib;ofstd.lib;shlwapi.lib;netapi32.lib;wsock32.lib;odbc32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -189,6 +190,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DicomImporter.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
@@ -197,6 +199,7 @@
     <ClInclude Include="Vacwork_DICOM_AnonDlg.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DicomImporter.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -210,6 +213,7 @@
     <ResourceCompile Include="VacworkDICOMAnon.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="res\VacworkDICOMAnon.rc2" />
   </ItemGroup>
   <ItemGroup>
@@ -217,5 +221,12 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\DCMTK.3.6.0\build\native\DCMTK.targets" Condition="Exists('..\packages\DCMTK.3.6.0\build\native\DCMTK.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\DCMTK.3.6.0\build\native\DCMTK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\DCMTK.3.6.0\build\native\DCMTK.targets'))" />
+  </Target>
 </Project>

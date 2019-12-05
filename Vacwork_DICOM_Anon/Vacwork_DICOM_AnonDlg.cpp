@@ -11,6 +11,7 @@
 #include <string.h>
 #include <cstring>
 #include <string>
+#include <vector>
 
 
 #ifdef _DEBUG
@@ -51,16 +52,22 @@ END_MESSAGE_MAP()
 
 // CVacworkDICOMAnonDlg dialog
 
+//CVacworkDICOMAnonDlg::CVacworkDICOMAnonDlg(CWnd* pParent /*=nullptr*/)
+//	: CDialogEx(IDD_VACWORK_DICOM_ANON_DIALOG, pParent)
+//{ 
+//	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
+//}
+
 CVacworkDICOMAnonDlg::CVacworkDICOMAnonDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_VACWORK_DICOM_ANON_DIALOG, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
 
+
 void CVacworkDICOMAnonDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	
 	DDX_Text(pDX, IDC_SOURCESIZE, m_size);
 	DDX_Text(pDX, IDC_FREEBYTES, m_freeBytes);
 	DDX_Text(pDX, IDC_USEDBYTES, m_usedBytes);
@@ -116,9 +123,8 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	DriveAttributes(_T("C://"));
+	m_progress.SetPos(0);
 	UpdateData(FALSE);
-	
-	//SourceList(m_sDataPath + _T("\\Images\\"));
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -167,6 +173,7 @@ void CVacworkDICOMAnonDlg::OnPaint()
 
 // The system calls this function to obtain the cursor to display while the user drags
 //  the minimized window.
+
 HCURSOR CVacworkDICOMAnonDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
@@ -255,8 +262,8 @@ BOOL CVacworkDICOMAnonDlg::SourceList(CString DirName) {
 	}
 
 	WIN32_FIND_DATA findData;
-	//HANDLE hFind = ::FindFirstFile(_T("*.dcm"), &findData);
-	HANDLE hFind = ::FindFirstFile(_T("*.raw"), &findData);
+	HANDLE hFind = ::FindFirstFile(_T("*.dcm"), &findData);   //find DCM file
+	//HANDLE hFind = ::FindFirstFile(_T("*.raw"), &findData);  //find raw file
 	int count = 0;
 	while (hFind != INVALID_HANDLE_VALUE)
 	{
@@ -290,7 +297,6 @@ void CVacworkDICOMAnonDlg::moveFile(CString inputFName) {//input parameter needs
 	//std::ifstream sourceFile("C:\\Source Folder\\STN911_Uncorr_201977_15h56_7168x1920.raw", std::ifstream::binary);
 	std::ifstream sourceFile(strInputDest, std::ifstream::binary);
 
-
 	destinationPath += (inputFName);
 	CT2A pszConvertedAnsiString2(destinationPath);
 	std::string strOutputDest(pszConvertedAnsiString2);
@@ -302,14 +308,14 @@ void CVacworkDICOMAnonDlg::moveFile(CString inputFName) {//input parameter needs
 	std::streamsize size = sourceFile.tellg();
 	sourceFile.seekg(0);
 
-
-	m_progress.SetPos(m_progressCount);
+	//m_progress.SetPos(m_progressCount);
 	// allocate memory for file content
 	char* buffer = new char[fileSize];
+	//USHORT* NBuffer = new USHORT[rows*cols*sizeof(USHORT)]
 
 	// read content of sourceFile
+	//sourceFile.read(buffer, fileSize);
 	sourceFile.read(buffer, fileSize);
-	
 	// write to destFile
 	destFile.write(buffer, fileSize);
 
@@ -325,15 +331,41 @@ void CVacworkDICOMAnonDlg::StepThroughFiles() {
 	int i;
 	for (i = 0; i < m_Files; i++) {
 		//make i number of copies of the file
-		moveFile(mylist[i]);
-		m_progressCount = (i/m_Files)*100;
+		importer.Import(mylist[i]);
+		importer.GetImagePixelDataFromDataset(cols, rows);
+
+		//moveFile(mylist[i]);
+		m_progressCount = ((i+1) /m_Files)*100;
 		m_progress.SetPos(m_progressCount);
-		m_FilesComplete = i;
+		m_FilesComplete = i+1;
 		UpdateData(FALSE);
 		//name them the same as OG files
 	}
 }
 
+//void CVacworkDICOMAnonDlg::moveDCMFile(CString inputFName) {
+//	importer.Import(inputFName);
+//	importer.GetImagePixelDataFromDataset(cols, rows);
+//	
+//	
+//
+//	CString destinationPath = m_outputDestination + "\\";
+//	destinationPath += (inputFName);
+//	CT2A pszConvertedAnsiString2(destinationPath);
+//	std::string strOutputDest(pszConvertedAnsiString2);
+//	// create destination file
+//	std::ofstream destFile(strOutputDest, std::ofstream::binary);
+//	//buffer needs to be character type 
+//	USHORT* DCMbuffer = new USHORT[rows * cols * sizeof(USHORT)];
+//	memcpy(DCMbuffer, m_image.data(), rows * cols * sizeof(USHORT));
+//
+//	destFile.write((char*)DCMbuffer, rows * cols * sizeof(USHORT));
+//
+//	destFile.close();
+//
+//	delete[] DCMbuffer;
+//
+//}
 void CVacworkDICOMAnonDlg::OnBnClickedRUN()
 {//RUN BUTTON
 	UpdateData(TRUE);

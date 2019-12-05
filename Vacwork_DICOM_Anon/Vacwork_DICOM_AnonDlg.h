@@ -5,6 +5,8 @@
 #pragma once
 #include <iostream>
 #include <vector>
+#include "DicomImporter.h"
+
 
 // CVacworkDICOMAnonDlg dialog
 class CVacworkDICOMAnonDlg : public CDialogEx
@@ -18,8 +20,10 @@ public:
 	void CalculateSize(CString DirName);
 	//void MoveFiles();
 	void moveFile(CString inputFName);
+	void moveDCMFile(CString inputFName);
 	BOOL SourceList(CString DirName);
 	void StepThroughFiles();
+
 
 	std::vector<CString> mylist;
 	//std::vector<CString> NewNames = {"File1.","",""};
@@ -87,6 +91,9 @@ private:
 
 	int m_Files;
 	int m_FilesComplete;
+
+	CDicomImporter importer;
+	UINT rows, cols;
 
 
 public:
