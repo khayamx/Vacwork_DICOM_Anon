@@ -197,6 +197,7 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1()
 	UpdateData(TRUE);
 }
 
+
 void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2()
 {
 
@@ -289,7 +290,7 @@ void CVacworkDICOMAnonDlg::moveFile(CString inputFName) {//input parameter needs
 	CString sourcePath = m_sourceDestination + "\\";
 	CString destinationPath = m_outputDestination + "\\";
 	//add the two
-	//sourcePath = m_sourceDestination + "\\";
+
 	sourcePath += (inputFName);
 	CT2A pszConvertedAnsiString1(sourcePath);
 	std::string strInputDest(pszConvertedAnsiString1);
@@ -326,16 +327,30 @@ void CVacworkDICOMAnonDlg::moveFile(CString inputFName) {//input parameter needs
 	destFile.close();
 }
 
+void CVacworkDICOMAnonDlg::moveFile2(CString inputFName) {
+	//DICOM compatible move files function
+	//inputFName.Delete(inputFName.GetLength() - 3); //remove .dcm
+	//inputFName += _T("raw");       //add .raw
+
+	//CString NewFile = inputFName.Replace(_T("dcm"),_T("raw"));
+	CString destinationPath = m_outputDestination + "\\";
+	//add the two
+	//refer to input file
+	destinationPath += (inputFName);
+	CT2A pszConvertedAnsiString2(destinationPath);
+	std::string strOutputDest(pszConvertedAnsiString2);
+	importer.Import(inputFName, strOutputDest);
+
+}
+
 void CVacworkDICOMAnonDlg::StepThroughFiles() {
 	//USE NUMBER OF DEICOM FILES FOUND AS COUNTER
 	int i;
 	for (i = 0; i < m_Files; i++) {
 		//make i number of copies of the file
+			
 		//importer.Import(mylist[i]);
-		importer.GetImagePixelDataFromDataset(cols, rows);
-		importer.Import(mylist[i]);
-
-		//moveFile(mylist[i]);
+		moveFile2(mylist[i]);
 		m_progressCount = ((i+1) /m_Files)*100;
 		m_progress.SetPos(m_progressCount);
 		m_FilesComplete = i+1;
@@ -344,33 +359,11 @@ void CVacworkDICOMAnonDlg::StepThroughFiles() {
 	}
 }
 
-//void CVacworkDICOMAnonDlg::moveDCMFile(CString inputFName) {
-//	importer.Import(inputFName);
-//	importer.GetImagePixelDataFromDataset(cols, rows);
-//	
-//	
-//
-//	CString destinationPath = m_outputDestination + "\\";
-//	destinationPath += (inputFName);
-//	CT2A pszConvertedAnsiString2(destinationPath);
-//	std::string strOutputDest(pszConvertedAnsiString2);
-//	// create destination file
-//	std::ofstream destFile(strOutputDest, std::ofstream::binary);
-//	//buffer needs to be character type 
-//	USHORT* DCMbuffer = new USHORT[rows * cols * sizeof(USHORT)];
-//	memcpy(DCMbuffer, m_image.data(), rows * cols * sizeof(USHORT));
-//
-//	destFile.write((char*)DCMbuffer, rows * cols * sizeof(USHORT));
-//
-//	destFile.close();
-//
-//	delete[] DCMbuffer;
-//
-//}
 void CVacworkDICOMAnonDlg::OnBnClickedRUN()
 {//RUN BUTTON
 	UpdateData(TRUE);
 	//MoveFile(fileName);
+	
 	StepThroughFiles();
 	m_progressCount = 100;
 	m_progress.SetPos(m_progressCount);

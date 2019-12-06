@@ -20,7 +20,7 @@ public:
 	void CalculateSize(CString DirName);
 	//void MoveFiles();
 	void moveFile(CString inputFName);
-	void moveDCMFile(CString inputFName);
+	void moveFile2(CString inputFName);
 	BOOL SourceList(CString DirName);
 	void StepThroughFiles();
 
@@ -83,7 +83,8 @@ private:
 	int width = 7168;
 	int height = 1920;
 
-	const char* fileName = "STN911_Uncorr_201977_15h56_7168x1920.raw";
+	CString fileName = _T("STN911_Uncorr_201977_15h56_7168x1920.raw");
+
 	//progress counter variables
 	//1 pixel is one unit of processing = 4 bytes/32 bits
 	int posInFile = 0;
@@ -93,7 +94,7 @@ private:
 	int m_FilesComplete;
 
 	CDicomImporter importer;
-	UINT rows, cols;
+	UINT Rrows, Rcols;
 
 
 public:
