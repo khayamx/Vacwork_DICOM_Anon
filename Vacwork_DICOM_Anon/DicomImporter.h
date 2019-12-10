@@ -30,8 +30,10 @@ public:
 	//deconstructor
 	~CDicomImporter();
 
-    BOOL Import(CString fileName, std::string outputDest);
-	BOOL GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT& nRows, std::string outputDest);
+   // BOOL Import(CString fileName, std::string outputDest);
+	BOOL Import(CString fileName);
+
+	BOOL GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT& nRows);
 	/*void ImportPixelData(_In_ const CStringA fileName);*/
 
 	//UINT16 nRows = 0;
@@ -43,9 +45,9 @@ public:
 	std::vector<unsigned char> m_icon;
 	std::vector<unsigned short> m_image;
 
-	//DbPatientInfo pi;
-	//DbStudyInfo si;
-	//DbImageInfo ii;
+	/*DbPatientInfo pi;
+	DbStudyInfo si;
+	DbImageInfo ii;*/
 
 private:
 
@@ -74,13 +76,13 @@ private:
     //    _In_ const UINT nCols,
     //    _In_ const UINT nRows);
 
-    //BOOL AddImagePixelData(
-    //    _In_ const int hPatient,
-    //    _In_ const int hStudy,
-    //    _In_ const int hImage,
-    //    _In_ const UINT nCols,
-    //    _In_ const UINT nRows);
-
+    /*BOOL AddImagePixelData(
+        _In_ const int hPatient,
+        _In_ const int hStudy,
+        _In_ const int hImage,
+        _In_ const UINT nCols,
+        _In_ const UINT nRows);
+*/
     //BOOL FindOrCreateImage(
     //    _In_ const int hPatient,
     //    _In_ const int hStudy,

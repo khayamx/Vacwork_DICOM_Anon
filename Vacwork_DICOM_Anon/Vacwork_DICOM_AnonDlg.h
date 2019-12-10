@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include "DicomImporter.h"
+#include "DicomExporter.h"
 
 
 // CVacworkDICOMAnonDlg dialog
@@ -59,9 +60,8 @@ private:
 
 	CProgressCtrl m_progress;
 	int m_progressCount = 0;
+
 	//For registry path on machine
-	char cbDataPC[MAX_PATH];
-	char cbDataPath[MAX_PATH];
 	unsigned long sizePC = 1024;
 	unsigned long sizePath = 1024;
 	DWORD type = REG_SZ;
@@ -79,21 +79,13 @@ private:
 
 	//variables for reading files
 	int fileSize = 55050240;
-	//char* buffer = new char[(long)fileSize];
-	int width = 7168;
-	int height = 1920;
-
-	CString fileName = _T("STN911_Uncorr_201977_15h56_7168x1920.raw");
-
-	//progress counter variables
-	//1 pixel is one unit of processing = 4 bytes/32 bits
-	int posInFile = 0;
-	int array = fileSize / 4;
+	
 
 	int m_Files;
 	int m_FilesComplete;
 
-	CDicomImporter importer;
+	/*CDicomImporter importer;
+	CDicomExporter exporter;*/
 	UINT Rrows, Rcols;
 
 

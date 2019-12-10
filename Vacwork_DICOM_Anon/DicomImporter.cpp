@@ -123,7 +123,6 @@
 //}
 
 
-//deconstructor
 CDicomImporter::~CDicomImporter() {
 	ds = NULL;
 	m_image.clear();
@@ -132,7 +131,7 @@ CDicomImporter::~CDicomImporter() {
 }
 
 
-BOOL CDicomImporter::Import(CString fileName, std::string outputDest)
+BOOL CDicomImporter::Import(CString fileName /*, std::string outputDest*/)
 {
 	CT2A strFileName(fileName);
 
@@ -176,19 +175,19 @@ BOOL CDicomImporter::Import(CString fileName, std::string outputDest)
     // Patient Info
     // --------------------------------------------------------------------
 
-    //if (GetPatientInfoFromDataset(pi) == FALSE)
-    //{
-    //    AfxMessageBox(_T("ERROR: Unable to get patient info from DICOM."));
-    //    return FALSE;
-    //}
+ /*   if (GetPatientInfoFromDataset(pi) == FALSE)
+    {
+        AfxMessageBox(_T("ERROR: Unable to get patient info from DICOM."));
+        return FALSE;
+    }*/
 
     //int hPatient = -1;
 
-    //if (FindOrCreatePatient(pi, &hPatient) == FALSE)
-    //{
-    //    AfxMessageBox(_T("ERROR: Unable to add patient info to database."));
-    //    return FALSE;
-    //}
+   /* if (FindOrCreatePatient(pi, &hPatient) == FALSE)
+    {
+        AfxMessageBox(_T("ERROR: Unable to add patient info to database."));
+        return FALSE;
+    }*/
 
     // --------------------------------------------------------------------
     // Study Info
@@ -202,11 +201,11 @@ BOOL CDicomImporter::Import(CString fileName, std::string outputDest)
 
     //int hStudy = -1;
 
-    //if (FindOrCreateStudy(hPatient, si, &hStudy) == FALSE)
-    //{
-    //    AfxMessageBox(_T("ERROR: Unable to add study info to database."));
-    //    return FALSE;
-    //}
+    /*if (FindOrCreateStudy(hPatient, si, &hStudy) == FALSE)
+    {
+        AfxMessageBox(_T("ERROR: Unable to add study info to database."));
+        return FALSE;
+    }*/
 
     // --------------------------------------------------------------------
     // Image Info
@@ -239,9 +238,9 @@ BOOL CDicomImporter::Import(CString fileName, std::string outputDest)
     // Image Pixel Data
     // ------------------------------------------------------------------------
 
-	GetImagePixelDataFromDataset(nImageCols, nImageRows, outputDest);
+	GetImagePixelDataFromDataset(nImageCols, nImageRows);
 
-	if (GetImagePixelDataFromDataset(nImageCols, nImageRows, outputDest) == FALSE)
+	if (GetImagePixelDataFromDataset(nImageCols, nImageRows) == FALSE)
     {
         //AfxMessageBox(_T("ERROR: Unable to get image pixel data from DICOM."));
         return FALSE;
@@ -253,11 +252,11 @@ BOOL CDicomImporter::Import(CString fileName, std::string outputDest)
     //    return FALSE;
     //}
 
-    //if (AddImagePixelData(hPatient, hStudy, hImage, nImageCols, nImageRows) == FALSE)
-    //{
-    //    AfxMessageBox(_T("ERROR: Unable to add image pixel data to database."));
-    //    return FALSE;
-    //}
+    /*if (AddImagePixelData(hPatient, hStudy, hImage, nImageCols, nImageRows) == FALSE)
+    {
+        AfxMessageBox(_T("ERROR: Unable to add image pixel data to database."));
+        return FALSE;
+    }*/
 
     // ------------------------------------------------------------------------
     // Icon Pixel Data
@@ -372,8 +371,10 @@ BOOL CDicomImporter::Import(CString fileName, std::string outputDest)
 //
 //    return TRUE;
 //}
-//
-BOOL CDicomImporter::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT& nRows, std::string outputDest)
+
+
+
+BOOL CDicomImporter::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT& nRows)
 {
     //ASSERT(ds != NULL);
     if (ds == NULL)
@@ -424,7 +425,10 @@ BOOL CDicomImporter::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT&
         else
         {
             return FALSE;
-        }
+		}
+		value = NULL;
+
+
     }
     else if (bitsAllocated == 16)
     {
@@ -439,42 +443,16 @@ BOOL CDicomImporter::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT&
         {
             return FALSE;
         }
-
-		//convert to .raw file
-
-		outputDest.erase(outputDest.end()-4, outputDest.end());//remove .dcm
-		outputDest = outputDest +"_"+ std::to_string(cols) +"x"+ std::to_string(rows);
-		//outputDest = ((outputDest + "_ %dx%d"),cols,rows);
-
-		outputDest += ".raw";//add .raw
-
-		// create destination file
-		std::ofstream destFile(outputDest, std::ofstream::binary);
-
-		//std::ofstream destfile("C:\\Destination Folder\\NewDCMFile.raw", std::ofstream::binary);
-
-
-		USHORT* buffer = new USHORT[rows * cols * sizeof(USHORT)];
-		//std::vector<USHORT> bufferV;
-
-		memcpy(buffer, m_image.data(), rows * cols * sizeof(USHORT));
-		//memcpy(bufferV.data(), m_image.data(), rows * cols * sizeof(USHORT));
-
-		destFile.write((char*)buffer, rows * cols * sizeof(USHORT));
-		//destfile.write((char*)bufferV.data(), rows * cols * sizeof(USHORT));
-
-		destFile.close();
-
-		//bufferV.clear();
-		delete[] buffer;
+		value = NULL;
     }
-    else
-    {
-        return FALSE;
-    }
-
+	else
+	{
+		return FALSE;
+	}
     return TRUE;
 }
+
+
 //
 //BOOL CDicomImporter::GetImageInfoFromDataset(_Out_ DbImageInfo& ii)
 //{
@@ -712,6 +690,9 @@ BOOL CDicomImporter::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT&
 //    return TRUE;
 //}
 //
+//
+
+//
 //BOOL CDicomImporter::GetPatientInfoFromDataset(_Out_ DbPatientInfo& pi)
 //{
 //    ASSERT(ds != NULL);
@@ -908,11 +889,11 @@ BOOL CDicomImporter::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT&
 //
 //    return TRUE;
 //}
-//
-//// ----------------------------------------------------------------------------
-//// Functions: Database
-//// ----------------------------------------------------------------------------
-//
+
+// ----------------------------------------------------------------------------
+// Functions: Database
+// ----------------------------------------------------------------------------
+
 //BOOL CDicomImporter::AddIconPixelData(
 //    _In_ const int hPatient,
 //    _In_ const int hStudy,
@@ -936,7 +917,7 @@ BOOL CDicomImporter::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT&
 //
 //    return TRUE;
 //}
-//
+
 //BOOL CDicomImporter::AddImagePixelData(
 //    _In_ const int hPatient,
 //    _In_ const int hStudy,
@@ -960,7 +941,7 @@ BOOL CDicomImporter::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT&
 //
 //    return TRUE;
 //}
-//
+
 //BOOL CDicomImporter::FindOrCreateImage(
 //    _In_ const int hPatient,
 //    _In_ const int hStudy,

@@ -1,4 +1,7 @@
 // Vacwork_DICOM_AnonDlg.cpp : implementation file
+//add debugger stuff for memory leak
+#define _CRTDBG_MAP_ALLOC
+
 
 #include "pch.h"
 #include "framework.h"
@@ -12,6 +15,11 @@
 #include <cstring>
 #include <string>
 #include <vector>
+#include <crtdbg.h>
+#include "DicomImporter.h"
+#include "DicomExporter.h"
+#include "DCMhandler.h"
+
 
 
 #ifdef _DEBUG
@@ -79,6 +87,7 @@ void CVacworkDICOMAnonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_MFCEDITBROWSE1, m_sourceDestination);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE2, m_outputDestination);
 }
+
 
 BEGIN_MESSAGE_MAP(CVacworkDICOMAnonDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
@@ -329,17 +338,24 @@ void CVacworkDICOMAnonDlg::moveFile(CString inputFName) {//input parameter needs
 
 void CVacworkDICOMAnonDlg::moveFile2(CString inputFName) {
 	//DICOM compatible move files function
-	//inputFName.Delete(inputFName.GetLength() - 3); //remove .dcm
-	//inputFName += _T("raw");       //add .raw
+	//CDicomImporter importer;
+	//CDicomExporter exporter;
 
-	//CString NewFile = inputFName.Replace(_T("dcm"),_T("raw"));
+	DCMhandler *DCM = new DCMhandler();
+
 	CString destinationPath = m_outputDestination + "\\";
 	//add the two
 	//refer to input file
 	destinationPath += (inputFName);
 	CT2A pszConvertedAnsiString2(destinationPath);
 	std::string strOutputDest(pszConvertedAnsiString2);
-	importer.Import(inputFName, strOutputDest);
+	
+	//importer.Import(inputFName);
+	//exporter.Export(inputFName, importer, strOutputDest);
+
+	DCM -> Convert(inputFName, strOutputDest);
+	
+	DCM -> ~DCMhandler();
 
 }
 
@@ -348,15 +364,17 @@ void CVacworkDICOMAnonDlg::StepThroughFiles() {
 	int i;
 	for (i = 0; i < m_Files; i++) {
 		//make i number of copies of the file
-			
-		//importer.Import(mylist[i]);
+	
 		moveFile2(mylist[i]);
-		m_progressCount = ((i+1) /m_Files)*100;
+		m_FilesComplete = i + 1;
+		m_progressCount = (float(m_FilesComplete /m_Files))*100;
 		m_progress.SetPos(m_progressCount);
-		m_FilesComplete = i+1;
+		
 		UpdateData(FALSE);
 		//name them the same as OG files
 	}
+	_CrtDumpMemoryLeaks();
+	return;
 }
 
 void CVacworkDICOMAnonDlg::OnBnClickedRUN()
