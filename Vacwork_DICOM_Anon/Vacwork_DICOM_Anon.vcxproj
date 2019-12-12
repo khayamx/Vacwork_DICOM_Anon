@@ -190,6 +190,8 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DCMhandler.h" />
+    <ClInclude Include="DicomExporter.h" />
     <ClInclude Include="DicomImporter.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -199,6 +201,8 @@
     <ClInclude Include="Vacwork_DICOM_AnonDlg.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DCMhandler.cpp" />
+    <ClCompile Include="DicomExporter.cpp" />
     <ClCompile Include="DicomImporter.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -213,6 +217,7 @@
     <ResourceCompile Include="VacworkDICOMAnon.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram.cd" />
     <None Include="packages.config" />
     <None Include="res\VacworkDICOMAnon.rc2" />
   </ItemGroup>

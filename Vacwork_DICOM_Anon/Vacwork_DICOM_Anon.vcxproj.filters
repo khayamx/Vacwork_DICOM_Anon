@@ -36,6 +36,12 @@
     <ClInclude Include="DicomImporter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DicomExporter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DCMhandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Vacwork_DICOM_Anon.cpp">
@@ -50,6 +56,12 @@
     <ClCompile Include="DicomImporter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DicomExporter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DCMhandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="VacworkDICOMAnon.rc">
@@ -61,6 +73,7 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="packages.config" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Vacwork_DICOM_Anon.ico">

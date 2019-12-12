@@ -5,8 +5,9 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include "DicomImporter.h"
-#include "DicomExporter.h"
+#include "DCMhandler.h"
+//#include "DicomImporter.h"
+//#include "DicomExporter.h"
 
 
 // CVacworkDICOMAnonDlg dialog
@@ -79,8 +80,6 @@ private:
 
 	//variables for reading files
 	int fileSize = 55050240;
-	
-
 	int m_Files;
 	int m_FilesComplete;
 

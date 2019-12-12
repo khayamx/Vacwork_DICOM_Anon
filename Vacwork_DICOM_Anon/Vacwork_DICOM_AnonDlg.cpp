@@ -16,9 +16,12 @@
 #include <string>
 #include <vector>
 #include <crtdbg.h>
-#include "DicomImporter.h"
-#include "DicomExporter.h"
 #include "DCMhandler.h"
+
+
+//#include "DicomImporter.h"
+//#include "DicomExporter.h"
+
 
 
 
@@ -125,6 +128,10 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
 		}
 	}
+	//minimize/maximize window
+	SetWindowLong(this->m_hWnd,
+		GWL_STYLE,
+		GetWindowLong(this->m_hWnd, GWL_STYLE) | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
 
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
@@ -354,9 +361,7 @@ void CVacworkDICOMAnonDlg::moveFile2(CString inputFName) {
 	//exporter.Export(inputFName, importer, strOutputDest);
 
 	DCM -> Convert(inputFName, strOutputDest);
-	
 	DCM -> ~DCMhandler();
-
 }
 
 void CVacworkDICOMAnonDlg::StepThroughFiles() {
