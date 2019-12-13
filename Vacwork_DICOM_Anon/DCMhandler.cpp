@@ -14,18 +14,22 @@ DCMhandler::DCMhandler()
 {
 	//FileName = FName;
 	//m_image = new vector<unsigned short>;
-
 }
 
 
 DCMhandler::~DCMhandler()
 {
-	ds = nullptr;
-
+	//DSet = nullptr;
+	//delete oldFile;
+	//delete DSet;
+	
+	//delete cond;
 	m_image.clear();
 	nImageCols = nImageRows = 0;
-	int x;
+	dcmDataDict.clear();
 	//maybe clear the dataset
+	//newDSet = nullptr;
+
 }
 
 
@@ -33,8 +37,15 @@ BOOL DCMhandler::Convert(CString FName, std::string destPath) {
 	//LOAD FILE
 	CT2A strFileName(FName);
 
-	DcmFileFormat file;
-	OFCondition cond = file.loadFile(strFileName);
+	DcmFileFormat oldFile;
+	//oldFile = new DcmFileFormat();
+	DSet = oldFile.getDataset();
+
+	//DcmFileFormat file;
+	cond = oldFile.loadFile(strFileName);
+	//OFCondition cond = dFile ->loadFile(strFileName);
+	//cond = oldFile->loadFile(strFileName);
+	//AfxMessageBox(_T("File loaded"), MB_OK || MB_APPLMODAL || MB_ICONEXCLAMATION, 0);
 
 	if (!cond.good())
 	{
@@ -42,9 +53,9 @@ BOOL DCMhandler::Convert(CString FName, std::string destPath) {
 		return FALSE;
 	}
 
-	ds = file.getDataset();
+	//ds = file.getDataset();
 	//maybe use getLength method
-	if (ds == NULL)
+	if (DSet == NULL)
 	{
 		return FALSE;
 	}
@@ -55,7 +66,7 @@ BOOL DCMhandler::Convert(CString FName, std::string destPath) {
 
 	const char* value = "";
 
-	cond = ds->findAndGetString(DCM_Modality, value);
+	cond = DSet->findAndGetString(DCM_Modality, value);
 	if (cond.good())
 	{
 		if (strcmp(value, "CR"))  // I don't know why but I appear to *have* to do it this way
@@ -68,7 +79,7 @@ BOOL DCMhandler::Convert(CString FName, std::string destPath) {
 		}
 	}
 
-	GetImagePixelDataFromDataset(nImageCols, nImageRows);
+	
 
 	if (GetImagePixelDataFromDataset(nImageCols, nImageRows) == FALSE)
 	{
@@ -78,18 +89,21 @@ BOOL DCMhandler::Convert(CString FName, std::string destPath) {
 
 
 	//EXPORT FILE
-	Export(FName, destPath);
+	
 	if (Export(FName, destPath)) {
 		return TRUE;
 
 	}
+
+	//oldFile.clear();
+	//dcmDataDict.clear();
 
 	return TRUE;
 }
 
 BOOL DCMhandler::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT& nRows) {
 	//ASSERT(ds != NULL);
-	if (ds == NULL)
+	if (DSet == NULL)
 	{
 		return FALSE;
 	}
@@ -101,15 +115,21 @@ BOOL DCMhandler::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT& nRo
 	OFCondition cond;
 
 	Uint16 rows;
-	cond = ds->findAndGetUint16(DCM_Rows, rows);
+	cond = DSet->findAndGetUint16(DCM_Rows, rows);
 	nRows = rows;
 
 	Uint16 cols;
-	cond = ds->findAndGetUint16(DCM_Columns, cols);
+	cond = DSet->findAndGetUint16(DCM_Columns, cols);
 	nCols = cols;
 
 	Uint16 bitsAllocated;
-	cond = ds->findAndGetUint16(DCM_BitsAllocated, bitsAllocated);
+	cond = DSet->findAndGetUint16(DCM_BitsAllocated, bitsAllocated);
+
+	cond = DSet->findAndGetUint16(DCM_NumberOfFrames, NumberOfFrames);
+
+	cond = DSet->findAndGetUint16(DCM_SamplesPerPixel, SamplesPerPixel);
+
+	cond = DSet->findAndGetUint16(DCM_BitsStored, bitsStored);
 
 	if (rows == 0 || cols == 0 || bitsAllocated == 0)
 	{
@@ -125,7 +145,7 @@ BOOL DCMhandler::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT& nRo
 	if (bitsAllocated == 8)
 	{
 		const Uint8* value = NULL;
-		ds->findAndGetUint8Array(DCM_PixelData, value);
+		DSet->findAndGetUint8Array(DCM_PixelData, value);
 
 		if (value != NULL)
 		{
@@ -139,13 +159,12 @@ BOOL DCMhandler::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT& nRo
 			return FALSE;
 		}
 		value = NULL;
-
-
 	}
+
 	else if (bitsAllocated == 16)
 	{
 		const Uint16* value = NULL;
-		ds->findAndGetUint16Array(DCM_PixelData, value);
+		DSet->findAndGetUint16Array(DCM_PixelData, value);
 
 		if (value != NULL)
 		{
@@ -167,59 +186,94 @@ BOOL DCMhandler::GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT& nRo
 
 
 BOOL DCMhandler::Export(CString fName, std::string destPath) {
-	DcmFileFormat* dFile = new DcmFileFormat();
-
-	DcmDataset *DSet = dFile->getDataset();
+	DcmFileFormat* newFile = new DcmFileFormat();
+	DcmDataset* newDSet = newFile->getDataset();
 
 	OFCondition OFret;
+	//OFret = cond;
 
-	OFret = DSet->putAndInsertString(DCM_PatientName, "NameSurname");
-	OFret = DSet->putAndInsertString(DCM_PatientID, "123467890"/* + simagecount*/);
-	OFret = DSet->putAndInsertString(DCM_PatientBirthDate, "00-00-0000");
-	OFret = DSet->putAndInsertString(DCM_PatientSex, "X");
-	OFret = DSet->putAndInsertString(DCM_StudyInstanceUID, "1234567890" /*+ simagecount*/);
-	OFret = DSet->putAndInsertString(DCM_StudyDate, "00-00-0000");
-	OFret = DSet->putAndInsertString(DCM_StudyTime, "00:00:00");
-	OFret = DSet->putAndInsertString(DCM_ReferringPhysicianName, "Physician");
-	OFret = DSet->putAndInsertString(DCM_StudyID, "1234567890"/* + simagecount*/);
-	OFret = DSet->putAndInsertString(DCM_AccessionNumber, "1234567890" /*+ simagecount*/);
-	OFret = DSet->putAndInsertString(DCM_SeriesInstanceUID, "1234567890" /*+ simagecount*/);
-	OFret = DSet->putAndInsertString(DCM_SeriesNumber, "1234567890" /*+ simagecount*/);
+	//newDSet = DSet; system crashes
+
+	//edit DICom tags - anonymize process
+	OFret = newDSet->putAndInsertString(DCM_PatientName, "NameSurname");
+	OFret = newDSet->putAndInsertString(DCM_PatientID, "123467890");
+	OFret = newDSet->putAndInsertString(DCM_PatientBirthDate, "00-00-0000");
+	OFret = newDSet->putAndInsertString(DCM_PatientSex, "X");
+	OFret = newDSet->putAndInsertString(DCM_StudyInstanceUID, "1234567890");
+	OFret = newDSet->putAndInsertString(DCM_StudyDate, "00-00-0000");
+	OFret = newDSet->putAndInsertString(DCM_StudyTime, "00:00:00");
+	OFret = newDSet->putAndInsertString(DCM_ReferringPhysicianName, "Physician");
+	OFret = newDSet->putAndInsertString(DCM_StudyID, "1234567890");
+	OFret = newDSet->putAndInsertString(DCM_AccessionNumber, "1234567890" );
+	OFret = newDSet->putAndInsertString(DCM_SeriesInstanceUID, "1234567890" );
+	OFret = newDSet->putAndInsertString(DCM_SeriesNumber, "1234567890" );
 
 	Uint16 Uint16val = 1;
-	OFret = DSet->putAndInsertUint16(DCM_SamplesPerPixel, Uint16val);
-	OFret = DSet->putAndInsertString(DCM_PhotometricInterpretation, "MONOCHROME2");
+	OFret = newDSet->putAndInsertUint16(DCM_SamplesPerPixel, Uint16val);
+	OFret = newDSet->putAndInsertString(DCM_PhotometricInterpretation, "MONOCHROME2");
 
-	OFret = DSet->putAndInsertUint16(DCM_Rows, nImageRows);
-	OFret = DSet->putAndInsertUint16(DCM_Columns,nImageCols);
-	OFret = DSet->putAndInsertUint16(DCM_BitsAllocated, 16);
-	OFret = DSet->putAndInsertUint16(DCM_BitsStored, 14);
-	OFret = DSet->putAndInsertUint16(DCM_HighBit, 13);
-	OFret = DSet->putAndInsertUint16(DCM_PixelRepresentation, 0);
+	OFret = newDSet->putAndInsertUint16(DCM_Rows, nImageRows);
+	OFret = newDSet->putAndInsertUint16(DCM_Columns,nImageCols);
+	OFret = newDSet->putAndInsertUint16(DCM_BitsAllocated, 16);
+	OFret = newDSet->putAndInsertUint16(DCM_BitsStored, 14);
+	OFret = newDSet->putAndInsertUint16(DCM_HighBit, 13);
+	OFret = newDSet->putAndInsertUint16(DCM_PixelRepresentation, 0);
 
 
-	// create destination file
-
-	USHORT* buffer = new USHORT[nImageCols * nImageRows * sizeof(USHORT)];
-	memcpy(buffer, m_image.data(), nImageCols * nImageRows * sizeof(USHORT));
-
-	OFret = DSet->putAndInsertUint16Array(DCM_PixelData, buffer, nImageCols * nImageRows * sizeof(USHORT));
-	//destFile.write((char*)buffer, m_importer.nImageRows * m_importer.nImageCols * sizeof(USHORT));
-	//write string as const char*
-
+	
+	////add pixel data //assess this logic  too
+	//USHORT* buffer = new USHORT[nImageCols * nImageRows * sizeof(USHORT)];
+	//memcpy(buffer, m_image.data(), nImageCols * nImageRows * sizeof(USHORT));
+	//OFret = newDSet->putAndInsertUint16Array(DCM_PixelData,(Uint16*) buffer, nImageCols * nImageRows * sizeof(USHORT));
+	//
+	////write string as const char*
+	//// create destination file
 	char * destination = new char[destPath.size() + 1];
-	std::copy(destPath.begin(), destPath.end(), destination);
+	copy(destPath.begin(), destPath.end(), destination);
 	destination[destPath.size()] = '\0'; // don't forget the terminating 0
+	//
+	//newFile->saveFile(destination, EXS_LittleEndianExplicit);
 	
-	dFile->saveFile(destination, EXS_LittleEndianExplicit);
+	//vector <char> pData = m_image.data();
+
+	//Mako's code
+	//vector<Uint16>* Vbuffer = new vector<Uint16>;
+
+	Uint16* buffer = new Uint16[nImageCols * nImageRows * sizeof(USHORT)];
+	memcpy(buffer, m_image.data(), nImageCols * nImageRows * sizeof(USHORT));
 	
+	DSet->putAndInsertUint16Array(DCM_PixelData, /*(Uint16*)*/buffer, nImageCols * nImageRows * sizeof(USHORT));
 
 	delete[] buffer;
-	dFile = nullptr;
-	// don't forget to free the string after finished using it
+	//Vbuffer->clear();
+
+	newFile->saveFile(destination, EXS_LittleEndianExplicit);
 	delete[] destination;
+	delete newFile;
 
 
-	//return S_OK;
-	return TRUE;
+
+	//create .raw file
+	
+	string destPathRaw = destPath;
+	destPathRaw.erase(destPathRaw.end() - 4, destPathRaw.end());//remove .dcm
+	destPathRaw = destPathRaw + "_" + to_string(nImageCols) + "x" + to_string(nImageRows);
+	destPathRaw += ".raw";//add .raw
+
+	// create destination file
+	ofstream destFile(destPathRaw, ofstream::binary);
+
+	USHORT* bufferRaw = new USHORT[nImageRows * nImageCols * sizeof(USHORT)];
+	memcpy(bufferRaw, m_image.data(), nImageRows * nImageCols * sizeof(USHORT));
+	destFile.write((char*)bufferRaw, nImageRows * nImageCols * sizeof(USHORT));
+	
+	destFile.close();
+	delete[] bufferRaw;
+
+
+	// don't forget to free the string after finished using it
+	
+	dcmDataDict.clear();
+
+	return S_OK;
 }

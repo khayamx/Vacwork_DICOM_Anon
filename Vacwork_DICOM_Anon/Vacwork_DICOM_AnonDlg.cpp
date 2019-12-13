@@ -129,9 +129,7 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 		}
 	}
 	//minimize/maximize window
-	SetWindowLong(this->m_hWnd,
-		GWL_STYLE,
-		GetWindowLong(this->m_hWnd, GWL_STYLE) | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+	//SetWindowLong(this->m_hWnd, WS_SYSMENU, GetWindowLong(this->m_hWnd, GWL_STYLE) | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
 
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
@@ -372,7 +370,7 @@ void CVacworkDICOMAnonDlg::StepThroughFiles() {
 	
 		moveFile2(mylist[i]);
 		m_FilesComplete = i + 1;
-		m_progressCount = (float(m_FilesComplete /m_Files))*100;
+		m_progressCount = ((m_FilesComplete % m_Files) * 100);
 		m_progress.SetPos(m_progressCount);
 		
 		UpdateData(FALSE);
