@@ -18,7 +18,7 @@
 #define IDC_NUMDCMFILES                 1023
 #define IDC_FILESDONE                   1024
 #define IDC_PROGRESSCOUNT               1025
-#define IDC_MFCBUTTON1                  1034
+#define IDC_LIST                        1040
 
 // Next default values for new objects
 // 
@@ -26,7 +26,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1035
+#define _APS_NEXT_CONTROL_VALUE         1041
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

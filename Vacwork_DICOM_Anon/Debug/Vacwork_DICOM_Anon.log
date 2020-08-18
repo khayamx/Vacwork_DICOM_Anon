@@ -1,2 +1,6 @@
-﻿  DicomImporter.cpp
-  Vacwork_DICOM_Anon.vcxproj -> C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Debug\Vacwork_DICOM_Anon.exe
+﻿  Vacwork_DICOM_AnonDlg.cpp
+C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(240,45): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(241,36): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(277,25): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\HP USER\Documents\GitHub\Vacwork_DICOM_Anon\Vacwork_DICOM_Anon\Vacwork_DICOM_AnonDlg.cpp(308): warning C4715: 'CVacworkDICOMAnonDlg::SourceList': not all control paths return a value
+LINK : fatal error LNK1104: cannot open file 'dcmdata.lib'

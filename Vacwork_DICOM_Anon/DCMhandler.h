@@ -9,27 +9,28 @@
 class DCMhandler
 {
 public:
-	DCMhandler();
-	~DCMhandler();
-	BOOL Convert(CString FName, std::string destPath);
+	//DCMhandler();
+	//~DCMhandler();
+	//BOOL Convert(CString FName, CString destPath);
+	//std::vector<unsigned short> m_image;
 
 private:
-	CString FileName;
-	DcmFileFormat* oldFile;//already saved in Convert function
-	DcmDataset* DSet;//already saved in Convert function
-	OFCondition cond;//already saved in Convert function
-	std::vector<unsigned short> m_image;
+	//CString FileName;
+	//DcmFileFormat* oldFile;//already saved in Convert function
+	//DcmDataset* DSet;//already saved in Convert function
+	//OFCondition cond;//already saved in Convert function
+	/*
 
-	//DcmFileFormat* newFile;
-	//DcmDataset* newDSet;
-	//OFCondition OFret;
+	USHORT* ImagePointer;
 
 	BOOL GetImagePixelDataFromDataset(_Out_ UINT& nCols, _Out_ UINT& nRows);
-	BOOL Export(CString fName, std::string destPath);
+	BOOL Export(CString destPath, USHORT* pData);
+	void CleanUp();
+
 	UINT nImageCols = 0, nImageRows = 0;
 
 	Uint16 NumberOfFrames;
 	Uint16 SamplesPerPixel;
 	Uint16 bitsStored;
+	int fileSize;*/
 };
-

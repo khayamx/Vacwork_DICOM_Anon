@@ -1,0 +1,19 @@
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories Condition="'$(PlatformToolset)' == 'v140' And '$(Platform)' == 'Win32' And '$(Configuration)' == 'Debug'">$(MSBuildThisFileDirectory)lib\v140\Win32\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Link>
+      <AdditionalLibraryDirectories Condition="'$(PlatformToolset)' == 'v140' And '$(Platform)' == 'Win32' And '$(Configuration)' == 'Release'">$(MSBuildThisFileDirectory)lib\v140\Win32\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Link>
+      <AdditionalLibraryDirectories Condition="'$(PlatformToolset)' == 'v141' And '$(Platform)' == 'Win32' And '$(Configuration)' == 'Debug'">$(MSBuildThisFileDirectory)lib\v141\Win32\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+    <Link>
+      <AdditionalLibraryDirectories Condition="'$(PlatformToolset)' == 'v141' And '$(Platform)' == 'Win32' And '$(Configuration)' == 'Release'">$(MSBuildThisFileDirectory)lib\v141\Win32\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+</Project>

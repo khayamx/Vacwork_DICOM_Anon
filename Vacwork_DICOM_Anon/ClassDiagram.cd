@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="CDicomExporter">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <FileName>DicomExporter.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CDicomImporter">
+    <Position X="6.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAABAAIQAAAAAIAAAAAAAAAIAAAAAABACAAAAAAA=</HashCode>
+      <FileName>DicomImporter.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CVacworkDICOMAnonApp">
+    <Position X="0.5" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAgAAAAAAAAAAAQAAAAAAAAAAAA=</HashCode>
+      <FileName>Vacwork_DICOM_Anon.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CVacworkDICOMAnonDlg">
+    <Position X="3.25" Y="0.5" Width="2.25" />
+    <NestedTypes>
+      <Enum Name="CVacworkDICOMAnonDlg::__unnamed_enum_0009_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Vacwork_DICOM_AnonDlg.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>FBiAIDUABEYAASYQQFgAEgBAABABCAYIAEhQgCIQAoQ=</HashCode>
+      <FileName>Vacwork_DICOM_AnonDlg.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="CAboutDlg">
+    <Position X="8.25" Y="1.25" Width="2" />
+    <NestedTypes>
+      <Enum Name="CAboutDlg::__unnamed_enum_0008_1" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Vacwork_DICOM_AnonDlg.cpp</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAABAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Vacwork_DICOM_AnonDlg.cpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,6 +1,5 @@
 // Vacwork_DICOM_AnonDlg.cpp : implementation file
-//add debugger stuff for memory leak
-#define _CRTDBG_MAP_ALLOC
+//#define _CRTDBG_MAP_ALLOC
 
 
 #include "pch.h"
@@ -16,7 +15,7 @@
 #include <string>
 #include <vector>
 #include <crtdbg.h>
-#include "DCMhandler.h"
+//#include "DCMhandler.h"
 
 
 //#include "DicomImporter.h"
@@ -89,6 +88,7 @@ void CVacworkDICOMAnonDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PROGRESS1, m_progress);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE1, m_sourceDestination);
 	DDX_Text(pDX, IDC_MFCEDITBROWSE2, m_outputDestination);
+	DDX_Control(pDX, IDC_LIST, m_Status); 
 }
 
 
@@ -100,6 +100,7 @@ BEGIN_MESSAGE_MAP(CVacworkDICOMAnonDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE1, &CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1)
 	ON_EN_CHANGE(IDC_MFCEDITBROWSE2, &CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2)
 	ON_BN_CLICKED(IDC_RUN, &CVacworkDICOMAnonDlg::OnBnClickedRUN)
+	
 END_MESSAGE_MAP()
 
 //CVacworkDICOMAnonDlg message handlers
@@ -110,7 +111,8 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 	m_size =0;
 	
 	// Add "About..." menu item to system menu.
-
+	UpdateStatus(_T("opening DICOM anonymizer"));
+	UpdateStatus(_T("please select a source directory"));
 	// IDM_ABOUTBOX must be in the system command range.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
@@ -128,8 +130,10 @@ BOOL CVacworkDICOMAnonDlg::OnInitDialog()
 			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
 		}
 	}
-	//minimize/maximize window
-	//SetWindowLong(this->m_hWnd, WS_SYSMENU, GetWindowLong(this->m_hWnd, GWL_STYLE) | WS_MINIMIZEBOX | WS_MAXIMIZEBOX);
+	
+	//DISABLE RUN and directory browse buttons
+	GetDlgItem(IDC_RUN)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MFCEDITBROWSE2)->EnableWindow(FALSE);
 
 	// Set the icon for this dialog.  The framework does this automatically
 	//  when the application's main window is not a dialog
@@ -208,7 +212,9 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse1()
 	UpdateData(TRUE);
 	CalculateSize(m_sourceDestination);
 	SourceList(m_sourceDestination);
+	GetDlgItem(IDC_MFCEDITBROWSE2)->EnableWindow(TRUE);
 	UpdateData(TRUE);
+	UpdateStatus(_T(" source directory selected please select a destination directory"));
 }
 
 
@@ -217,8 +223,11 @@ void CVacworkDICOMAnonDlg::OnEnChangeMfceditbrowse2()
 
 	UpdateData(TRUE);
 	CString destPath = m_outputDestination;
+	GetDlgItem(IDC_RUN)->EnableWindow(TRUE);
+	UpdateStatus(_T("click RUN to anonymize"));
 
 	UpdateData(TRUE);
+
 }
 // Write own functions here
 
@@ -298,95 +307,96 @@ BOOL CVacworkDICOMAnonDlg::SourceList(CString DirName) {
 	UpdateData(FALSE);
 }
 
-void CVacworkDICOMAnonDlg::moveFile(CString inputFName) {//input parameter needs to be a constacnt char w/ souce file name
-	//need to refer to input file name of source file name of source path
-	//using namespace ATL;
-	CString sourcePath = m_sourceDestination + "\\";
-	CString destinationPath = m_outputDestination + "\\";
-	//add the two
 
-	sourcePath += (inputFName);
-	CT2A pszConvertedAnsiString1(sourcePath);
-	std::string strInputDest(pszConvertedAnsiString1);
-	//refer to input file
-	//std::ifstream sourceFile("C:\\Source Folder\\STN911_Uncorr_201977_15h56_7168x1920.raw", std::ifstream::binary);
-	std::ifstream sourceFile(strInputDest, std::ifstream::binary);
-
-	destinationPath += (inputFName);
-	CT2A pszConvertedAnsiString2(destinationPath);
-	std::string strOutputDest(pszConvertedAnsiString2);
-    // create destination file
-	std::ofstream destFile(strOutputDest, std::ofstream::binary);
-	
-	//get size of file
-	sourceFile.seekg(0, sourceFile.end);
-	std::streamsize size = sourceFile.tellg();
-	sourceFile.seekg(0);
-
-	//m_progress.SetPos(m_progressCount);
-	// allocate memory for file content
-	char* buffer = new char[fileSize];
-	//USHORT* NBuffer = new USHORT[rows*cols*sizeof(USHORT)]
-
-	// read content of sourceFile
-	//sourceFile.read(buffer, fileSize);
-	sourceFile.read(buffer, fileSize);
-	// write to destFile
-	destFile.write(buffer, fileSize);
-
-	//clean up
-	// release dynamically-allocated memory 
-	delete[] buffer;
-	sourceFile.close();
-	destFile.close();
-}
 
 void CVacworkDICOMAnonDlg::moveFile2(CString inputFName) {
 	//DICOM compatible move files function
-	//CDicomImporter importer;
-	//CDicomExporter exporter;
-
-	DCMhandler *DCM = new DCMhandler();
-
+	UpdateStatus(inputFName);
 	CString destinationPath = m_outputDestination + "\\";
-	//add the two
-	//refer to input file
 	destinationPath += (inputFName);
-	CT2A pszConvertedAnsiString2(destinationPath);
-	std::string strOutputDest(pszConvertedAnsiString2);
-	
-	//importer.Import(inputFName);
-	//exporter.Export(inputFName, importer, strOutputDest);
 
-	DCM -> Convert(inputFName, strOutputDest);
-	DCM -> ~DCMhandler();
+	//DCM.Convert(inputFName, destinationPath);
+	importer.Import(inputFName);
+	exporter.Export(inputFName, importer.m_image.data(), destinationPath, importer.nImageRows, importer.nImageCols);
 }
 
 void CVacworkDICOMAnonDlg::StepThroughFiles() {
 	//USE NUMBER OF DEICOM FILES FOUND AS COUNTER
-	int i;
-	for (i = 0; i < m_Files; i++) {
-		//make i number of copies of the file
 	
-		moveFile2(mylist[i]);
-		m_FilesComplete = i + 1;
-		m_progressCount = ((m_FilesComplete % m_Files) * 100);
+	for	(std::vector<CString>::iterator i = mylist.begin(); i != mylist.end(); ++i)
+	{
+		//make i number of copies of the file
+		CString DCMFile = *i;
+		moveFile2(DCMFile);
+		m_FilesComplete++;
+		m_progressCount = (m_FilesComplete  * 100)/m_Files;
 		m_progress.SetPos(m_progressCount);
 		
+		CleanUp();
 		UpdateData(FALSE);
 		//name them the same as OG files
 	}
-	_CrtDumpMemoryLeaks();
-	return;
+	////_CrtDumpMemoryLeaks();
+	//return;
 }
 
 void CVacworkDICOMAnonDlg::OnBnClickedRUN()
 {//RUN BUTTON
-	UpdateData(TRUE);
+	//UpdateData(TRUE);
 	//MoveFile(fileName);
 	
 	StepThroughFiles();
 	m_progressCount = 100;
 	m_progress.SetPos(m_progressCount);
+
+	//RESET
+	m_progressCount = 100;
+
+	m_progress.SetPos(m_progressCount);
+
+	AfxMessageBox(_T("Complete. Click OK."));
+
+	m_progressCount = 0;
+	m_progress.SetPos(m_progressCount);
+	m_Files = m_FilesComplete = 0;
+
+	m_sourceDestination = m_outputDestination = _T("");
+
+	GetDlgItem(IDC_RUN)->EnableWindow(FALSE);
+	GetDlgItem(IDC_MFCEDITBROWSE2)->EnableWindow(FALSE);
+
+	UpdateStatus(_T("Anonimyzation complete. Please select new source directory to anonymize."));
+	UpdateData(FALSE);
+}
+
+void CVacworkDICOMAnonDlg::CleanUp()
+{
+	//dcmDataDict.clear();   no honey
+	//delete DSet;
+
+	importer.m_image.resize(0);
+	std::vector<unsigned short> vector_temp;
+	vector_temp.swap(importer.m_image);
+
+	vector_temp.clear();
+	vector_temp.shrink_to_fit();
+}
+
+void CVacworkDICOMAnonDlg::UpdateStatus(CString message)
+{
+	// TODO: Add your control notification handler code here
+	GetLocalTime(&st);
+	StatusMessage.Format((_T("% 02d:% 02d: %02d - ")+ message), st.wHour, st.wMinute, st.wSecond);
+
+	m_Status.SetHorizontalExtent(400);
+
+	if (m_Status.GetCount() > 400)
+	{
+		m_Status.DeleteString(0);
+	}
+
+	m_Status.InsertString(m_Status.GetCount(), (LPCTSTR)StatusMessage);
+	m_Status.SetCurSel(m_Status.GetCount() - 1);
+
 	UpdateData(FALSE);
 }

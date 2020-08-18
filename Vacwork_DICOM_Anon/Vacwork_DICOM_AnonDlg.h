@@ -5,9 +5,9 @@
 #pragma once
 #include <iostream>
 #include <vector>
-#include "DCMhandler.h"
-//#include "DicomImporter.h"
-//#include "DicomExporter.h"
+//#include "DCMhandler.h"
+#include "DicomImporter.h"
+#include "DicomExporter.h"
 
 
 // CVacworkDICOMAnonDlg dialog
@@ -20,15 +20,14 @@ public:
 	//insert functions I have created
 	void DriveAttributes(CString DirName);
 	void CalculateSize(CString DirName);
-	//void MoveFiles();
-	void moveFile(CString inputFName);
+
 	void moveFile2(CString inputFName);
 	BOOL SourceList(CString DirName);
 	void StepThroughFiles();
-
-
+	void CleanUp();
+	void UpdateStatus(CString message);
 	std::vector<CString> mylist;
-	//std::vector<CString> NewNames = {"File1.","",""};
+	
 
 // Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -79,15 +78,22 @@ private:
 	int m_capacity;
 
 	//variables for reading files
-	int fileSize = 55050240;
+	
 	int m_Files;
 	int m_FilesComplete;
 
-	/*CDicomImporter importer;
-	CDicomExporter exporter;*/
 	UINT Rrows, Rcols;
 
+	//DCMhandler DCM;
+	CDicomImporter importer;
+	CDicomExporter exporter;
+	
+	//STATUS LIST STUFF
+	CListBox m_Status;
+	CString StatusMessage;
+	SYSTEMTIME st;
 
 public:
 	afx_msg void OnBnClickedRUN();
-	};
+	
+};
